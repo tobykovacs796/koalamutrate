@@ -1,0 +1,37 @@
+#!/bin/bash
+
+#PBS -P RDS-FSC-Cockroaches_PBH-RW
+#PBS -N koala_474_filt
+#PBS -l select=1:ncpus=1:mem=120GB
+#PBS -l walltime=40:00:00
+#PBS -m abe
+#PBS -M tkov3622@hpc.sydney.edu.au
+#PBS -q defaultQ
+
+
+module load vcftools samtools htslib bcftools/1.17
+
+cd /scratch/RDS-FSC-awggdata-RW/koala_dnazoo/wgs/SplitsTree/474/full
+
+### Use the +fill-tags plugin in bcftools to calculate DP from LAD
+bcftools +fill-tags koala-joint-genotyping-474.vcf.gz -Oz -o koala-joint-genotyping-474.DP.vcf.gz -- -t 'FORMAT/DP:1=int(smpl_sum(FORMAT/LAD))'
+bcftools index koala-joint-genotyping-474.DP.vcf.gz
+
+### Use vcftools to apply filtering steps
+vcftools --gzvcf koala-joint-genotyping-474.DP.vcf.gz --min-meanDP 15 --max-meanDP 60 --remove-filtered-geno-all --recode --stdout | bgzip -c > koala-joint-genotyping-474_15-60depth_QUAL.vcf.gz
+bcftools index koala-joint-genotyping-474_15-60depth_QUAL.vcf.gz
+
+vcftools --gzvcf koala-joint-genotyping-474_15-60depth_QUAL.vcf.gz --max-missing 1 --recode --stdout | bgzip -c > koala-joint-genotyping-474_15-60depth_QUAL_100cr.vcf.gz
+bcftools index koala-joint-genotyping-474_15-60depth_QUAL_100cr.vcf.gz
+
+### Filter: Keep only contigs >50kb and exclude putative X contigs
+vcftools --gzvcf koala-joint-genotyping-474_15-60depth_QUAL_100cr.vcf.gz --recode --recode-INFO-all --bed koala.50k_noX.bed --stdout | bgzip -c > kjg_474_noX_50k.vcf.gz
+bcftools index kjg_474_noX_50k.vcf.gz
+
+### Filter: Keep only biallelic sites
+vcftools --gzvcf kjg_474_noX_50k.vcf.gz --recode --recode-INFO-all --min-alleles 2 --max-alleles 2 --stdout | bgzip -c > kjg_474_noX_50k_bi.vcf.gz
+bcftools index kjg_474_noX_50k_bi.vcf.gz
+
+### Additional filtering (MAF & MAC) - Not used in SMCpp but included just in case
+vcftools --gzvcf koala-joint-genotyping-474_15-60depth_QUAL_100cr.vcf.gz --maf 0.005 --mac 1 --recode --stdout | bgzip -c > koala-joint-genotyping-474_15-60depth_100cr_1mac_0.005maf.vcf.gz
+bcftools index koala-joint-genotyping-474_15-60depth_100cr_1mac_0.005maf.vcf.gz

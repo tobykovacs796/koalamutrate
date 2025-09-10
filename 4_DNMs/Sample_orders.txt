@@ -1,0 +1,16 @@
+# Pull out the sample order for each of the vcfs
+#!/bin/bash
+#PBS -P RDS-FSC-Nocticola-RW
+#PBS -l select=1:ncpus=1:mem=64GB
+#PBS -l walltime=1:00:00
+#PBS -q defaultQ
+#PBS -M tkov3622@uni.sydney.edu.au
+#PBS -m abe
+
+module load bcftools/1.9
+
+bcftools query -l /scratch/RDS-FSC-awggdata-RW/koala_dnazoo/wgs/Phascolarctos_cinereus/vcf_handling/inter_vcf/genotype_genomicDBI_TarZoo-F-B80238_snp_filt.g.vcf > /scratch/RDS-FSC-awggdata-RW/koala_dnazoo/wgs/Phascolarctos_cinereus/de_novo_mutation/sample_order_TarZoo-F-B80238.txt
+bcftools query -l /scratch/RDS-FSC-awggdata-RW/koala_dnazoo/wgs/Phascolarctos_cinereus/vcf_handling/inter_vcf/genotype_genomicDBI_FWP-M-46879_snp_filt.g.vcf > /scratch/RDS-FSC-awggdata-RW/koala_dnazoo/wgs/Phascolarctos_cinereus/de_novo_mutation/sample_order_FWP-M-46879.txt
+bcftools query -l /scratch/RDS-FSC-awggdata-RW/koala_dnazoo/wgs/Phascolarctos_cinereus/vcf_handling/inter_vcf/genotype_genomicDBI_FWP-F-46861_snp_filt.g.vcf > /scratch/RDS-FSC-awggdata-RW/koala_dnazoo/wgs/Phascolarctos_cinereus/de_novo_mutation/sample_order_FWP-F-46861.txt
+bcftools query -l /scratch/RDS-FSC-awggdata-RW/koala_dnazoo/wgs/Phascolarctos_cinereus/vcf_handling/inter_vcf/genotype_genomicDBI_FWP-F-46857_snp_filt.g.vcf > /scratch/RDS-FSC-awggdata-RW/koala_dnazoo/wgs/Phascolarctos_cinereus/de_novo_mutation/sample_order_FWP-F-46857.txt
+bcftools query -l /scratch/RDS-FSC-awggdata-RW/koala_dnazoo/wgs/Phascolarctos_cinereus/vcf_handling/inter_vcf/genotype_genomicDBI_TarZoo-M-B70170_snp_filt.g.vcf > /scratch/RDS-FSC-awggdata-RW/koala_dnazoo/wgs/Phascolarctos_cinereus/de_novo_mutation/sample_order_TarZoo-M-B70170.txt

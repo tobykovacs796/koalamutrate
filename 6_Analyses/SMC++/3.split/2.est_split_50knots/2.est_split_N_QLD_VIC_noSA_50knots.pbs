@@ -1,0 +1,32 @@
+#!/bin/bash
+
+#PBS -P RDS-FSC-Nocticola-RW
+#PBS -N log2.est_splt_N_QLD_VIC_noSA_50knots
+#PBS -l select=1:ncpus=16:mem=50GB
+#PBS -l walltime=10:00:00
+#PBS -m abe
+#PBS -M tkov3622@hpc.sydney.edu.au
+#PBS -q defaultQ
+
+module load python/3.9.15 mpfr/4.0.2 gsl/1.16 gcc/9.1.0
+
+cd /scratch/RDS-FSC-awggdata-RW/koala_dnazoo/wgs/SMCpp/full/smc/split
+
+# Set up temporary directory
+export TMPDIR=/scratch/RDS-FSC-awggdata-RW/koala_dnazoo/wgs/SMCpp/smc/tmp/job_${PBS_JOBID}
+mkdir -p "$TMPDIR"
+
+source smc-env/bin/activate
+
+# Run split using estimates for each population
+smc++ split --timepoints 1e3 1e6 -o N_QLD_VIC_noSA_50knots/ \
+    ../estimate/N_QLD/tpe3e6_50knots/model.final.json \
+    ../estimate/VIC_noSA/tpe3e6_50knots/model.final.json \
+    ../estimate/N_QLD/data/N_QLD_*.smc.gz \
+    ../estimate/VIC_noSA/data/VIC_noSA_*.smc.gz \
+    data/N_QLD_VIC_noSA_*.smc.gz \
+    data/VIC_noSA_N_QLD_*.smc.gz
+
+# Plot all of the models
+smc++ plot -c split_N_QLD_VIC_noSA_50knots.pdf \
+    N_QLD_VIC_noSA_50knots/model.final.json --csv -g 7

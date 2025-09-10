@@ -1,0 +1,488 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r}
+# Load required libraries
+library(readxl)
+library(dplyr)
+library(Hmisc)
+library(ggplot2)
+
+# Read data
+ind_mammal_mutrat_df <- read_excel("../Koala_results.xlsx", sheet = "mammal_mutrat")
+
+# Summarize data by species
+sp_mammal_mutrat_df <- ind_mammal_mutrat_df %>%
+  group_by(`Species name`) %>%
+  summarise(
+    Total_Denovo_Candidates = sum(`Number of de novo candidates`, na.rm = TRUE),
+    Total_Callability = sum(Callability, na.rm = TRUE),
+    False_Negative_Rate = first(`False-negative rate`) 
+  ) %>%
+  mutate(
+    FNRcorrected_Callable_Genome = (1 - False_Negative_Rate) * 2 * Total_Callability
+  )
+
+# Initialize columns for mutation rates and confidence intervals
+sp_mammal_mutrat_df <- sp_mammal_mutrat_df %>%
+  mutate(
+    Mutation_Rate = NA,
+    Lower_CI = NA,
+    Upper_CI = NA
+  )
+
+# Compute binomial confidence intervals for each species
+for (i in 1:nrow(sp_mammal_mutrat_df)) {
+  conf_int <- binconf(sp_mammal_mutrat_df$Total_Denovo_Candidates[i], 
+                      sp_mammal_mutrat_df$FNRcorrected_Callable_Genome[i], 
+                      alpha = 0.05)
+  
+  sp_mammal_mutrat_df[i, c("Mutation_Rate", "Lower_CI", "Upper_CI")] <- conf_int
+}
+
+# Define species order and remove underscores
+species_order <- c(
+  "Phascolarctos cinereus",  # Koala
+  "Sarcophilus harrisii",    # Tasmanian Devil
+  "Monodelphis domestica",   # Opossum
+  "Homo sapiens",            # Human
+  "Tupaia chinensis belangeri",  # Tree Shrew
+  "Mus musculus",            # Mouse
+  "Ailurus fulgens",         # Red Panda
+  "Rousettus aegyptiacus",   # Bat
+  "Ceratotherium simum simum", # Rhino
+  "Giraffa camelopardalis",  # Giraffe
+  "Procavia capensis"        # Hyrax
+)
+
+# Remove underscores from data and order species
+sp_mammal_mutrat_df$`Species name` <- gsub("_", " ", sp_mammal_mutrat_df$`Species name`)
+ind_mammal_mutrat_df$`Species name` <- gsub("_", " ", ind_mammal_mutrat_df$`Species name`)
+
+sp_mammal_mutrat_df$`Species name` <- factor(sp_mammal_mutrat_df$`Species name`, levels = species_order)
+ind_mammal_mutrat_df$`Species name` <- factor(ind_mammal_mutrat_df$`Species name`, levels = species_order)
+
+# Plot mutation rates with confidence intervals (horizontal format)
+mammal_mutrats_hor <- ggplot() +
+  geom_errorbar(data = sp_mammal_mutrat_df, 
+                aes(x = `Species name`, ymin = Lower_CI * 1e8, ymax = Upper_CI * 1e8), 
+                width = 0.2, color = "gray28", linewidth = 1) +  
+  geom_point(data = sp_mammal_mutrat_df, 
+             aes(x = `Species name`, y = Mutation_Rate * 1e8), 
+             size = 4, color = "gray28") +  
+  geom_point(data = ind_mammal_mutrat_df, 
+             aes(x = `Species name`, y = `Mutation rate per site per generation (m_generation)` * 1e8), 
+             color = "darkorange3", size = 2) +  
+  labs(x = "Species", y = expression("Mutation Rate (x10"^"-8"~"mutations/site/generation)")) +
+  theme_classic() +
+  theme(
+    legend.background = element_rect(fill = "transparent"), 
+    legend.box.background = element_rect(fill = "transparent"), 
+    panel.background = element_rect(fill = "transparent"), 
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank(), 
+    plot.background = element_rect(fill = "transparent", color = NA),
+    axis.text.x = element_text(angle = 45, hjust = 1)  
+  ) +
+  scale_y_continuous(
+    limits = c(0, 1.8),  
+    breaks = seq(0, 1.8, by = 0.2),  
+    labels = seq(0, 1.8, by = 0.2)  
+  )
+
+# Create vertical plot with x-axis in 10⁸ scale
+mammal_mutrats_vert <- ggplot() +
+  geom_errorbar(data = sp_mammal_mutrat_df, 
+                aes(y = `Species name`, xmin = Lower_CI * 1e8, xmax = Upper_CI * 1e8), 
+                width = 0.2, color = "gray28", linewidth = 1) +  
+  geom_point(data = sp_mammal_mutrat_df, 
+             aes(y = `Species name`, x = Mutation_Rate * 1e8), 
+             size = 4, color = "gray28") +  
+  geom_point(data = ind_mammal_mutrat_df, 
+             aes(y = `Species name`, x = `Mutation rate per site per generation (m_generation)` * 1e8), 
+             color = "darkorange3", size = 2) +  
+  labs(y = "Species", x = expression("Mutation Rate (x10"^"-8"~"mutations/site/generation)")) +
+  theme_classic() +
+  theme(
+    legend.background = element_rect(fill = "transparent"), 
+    legend.box.background = element_rect(fill = "transparent"), 
+    panel.background = element_rect(fill = "transparent"), 
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank(), 
+    plot.background = element_rect(fill = "transparent", color = NA),
+    axis.text.y = element_text(face = "italic")  # Italicize species names on the y-axis
+  ) +
+  scale_x_continuous(
+    limits = c(0, 1.8),  # Adjusted for 10⁸ scaling
+    breaks = seq(0, 1.8, by = 0.2),  # 0, 0.2, 0.4, ..., 1.8
+    labels = seq(0, 1.8, by = 0.2)
+  )
+
+# Print the plot
+print(mammal_mutrats_hor)
+print(mammal_mutrats_vert)
+```
+
+
+
+```{r}
+
+# Set working directory
+setwd("~/OneDrive - The University of Sydney (Staff)/1_PhD/koala/mutation_rate/Bergeron et al. 2023/germline_mutation_rate-master_Toby_Koalas/Results")
+
+# Load necessary libraries
+library(data.table)
+library(ggplot2)
+
+# Define input files
+input_files <- c("../../data_denovo_TarZoo-M-B70170.tab", "../../data_denovo_FWP-F-46857.tab", "../../data_denovo_FWP-M-46879.tab", "../../data_denovo_TarZoo-F-B80238.tab")
+
+# Define mutation categories with complementarity
+mutation_map <- list(
+  "C>A" = list(c("C", "A"), c("G", "T")),
+  "C>G" = list(c("C", "G"), c("G", "C")),
+  "C>T" = list(c("C", "T"), c("G", "A")),
+  "A>T" = list(c("T", "A"), c("A", "T")),
+  "A>G" = list(c("T", "C"), c("A", "G")),
+  "A>C" = list(c("T", "G"), c("A", "C"))
+)
+
+# Initialize combined counts
+combined_counts <- setNames(rep(0, length(mutation_map)), names(mutation_map))
+mutation_data <- data.table(File = character(), Mutation = character(), Count = integer(), Percentage = numeric())
+
+# Initialize combined group counts
+combined_tarZoo_counts <- setNames(rep(0, length(mutation_map)), names(mutation_map))
+combined_fwp_counts <- setNames(rep(0, length(mutation_map)), names(mutation_map))
+
+# Process each file
+for (file in input_files) {
+  if (!file.exists(file)) {
+    warning(paste("Warning: File", file, "not found! Skipping."))
+    next
+  }
+  
+  # Read the file
+  df <- fread(file)
+  
+  # Ensure REF and ALT columns exist
+  if (!all(c("REF", "ALT") %in% colnames(df))) {
+    stop(paste("Error: File", file, "must contain 'REF' and 'ALT' columns."))
+  }
+  
+  # Initialize counts for the current file
+  mutation_counts <- setNames(rep(0, length(mutation_map)), names(mutation_map))
+  
+  # Count mutations
+  for (i in 1:nrow(df)) {
+    ref <- df$REF[i]
+    alt <- df$ALT[i]
+    
+    # Check for matching mutations
+    for (mutation in names(mutation_map)) {
+      mutation_pairs <- mutation_map[[mutation]]
+      if (any(sapply(mutation_pairs, function(x) all(x == c(ref, alt))))) {
+        mutation_counts[mutation] <- mutation_counts[mutation] + 1
+        combined_counts[mutation] <- combined_counts[mutation] + 1
+        break
+      }
+    }
+  }
+  
+  # Update combined counts for TarZoo and FWP
+  if (grepl("TarZoo", file)) {
+    combined_tarZoo_counts <- combined_tarZoo_counts + mutation_counts
+  } else if (grepl("FWP", file)) {
+    combined_fwp_counts <- combined_fwp_counts + mutation_counts
+  }
+  
+  # Store results for plotting
+  total_mutations <- sum(mutation_counts)
+  mutation_data <- rbind(mutation_data, data.table(File = file, Mutation = names(mutation_counts), Count = as.integer(mutation_counts), Percentage = (as.integer(mutation_counts) / total_mutations) * 100))
+}
+
+# Create combined result data table for plotting
+total_combined <- sum(combined_counts)
+overall_data <- data.table(File = "Combined", Mutation = names(combined_counts), Count = as.integer(combined_counts), Percentage = (as.integer(combined_counts) / total_combined) * 100)
+mutation_data <- rbind(mutation_data, overall_data)
+
+# Combine TarZoo and FWP results for plotting
+tarZoo_data <- data.table(File = "TarZoo Combined", Mutation = names(combined_tarZoo_counts), Count = as.integer(combined_tarZoo_counts), Percentage = (as.integer(combined_tarZoo_counts) / sum(combined_tarZoo_counts)) * 100)
+fwp_data <- data.table(File = "FWP Combined", Mutation = names(combined_fwp_counts), Count = as.integer(combined_fwp_counts), Percentage = (as.integer(combined_fwp_counts) / sum(combined_fwp_counts)) * 100)
+
+# Append combined data for TarZoo and FWP
+mutation_data <- rbind(mutation_data, tarZoo_data, fwp_data)
+
+# Plot the mutation counts for all samples combined
+ggplot(mutation_data, aes(x = File, y = Count, fill = Mutation)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  theme_minimal() +
+  labs(title = "Mutation Counts per File", x = "File", y = "Count") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Plot mutation percentages per file (stacked bars)
+ggplot(mutation_data, aes(x = File, y = Percentage, fill = Mutation)) +
+  geom_bar(stat = "identity", position = "stack") +
+  theme_minimal() +
+  labs(title = "Mutation Percentages per File", x = "File", y = "Percentage (%)") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Plot mutation percentages per file (dodge position)
+ggplot(mutation_data, aes(x = File, y = Percentage, fill = Mutation)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  theme_minimal() +
+  labs(title = "Mutation Percentages per File", x = "File", y = "Percentage (%)") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+ggsave("mutation_distribution_indvs_perc.png", plot = last_plot(), bg = "transparent")
+ggsave("mutation_distribution_indvs_perc.pdf", plot = last_plot(), bg = "transparent")
+
+
+# Plot the combined mutation counts for TarZoo and FWP
+ggplot(mutation_data[Mutation %in% names(combined_tarZoo_counts)], aes(x = File, y = Count, fill = Mutation)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  theme_minimal() +
+  labs(title = "Combined Mutation Counts for TarZoo and FWP", x = "File", y = "Count") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+ggsave("mutation_distribution_indvs_counts.png", plot = last_plot(), bg = "transparent")
+ggsave("mutation_distribution_indvs_counts.pdf", plot = last_plot(), bg = "transparent")
+
+
+
+# Plot the combined mutation percentages for TarZoo and FWP (stacked bars)
+ggplot(mutation_data[Mutation %in% names(combined_tarZoo_counts)], aes(x = File, y = Percentage, fill = Mutation)) +
+  geom_bar(stat = "identity", position = "stack") +
+  theme_minimal() +
+  labs(title = "Combined Mutation Percentages for TarZoo and FWP", x = "File", y = "Percentage (%)") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+ggsave("mutation_distribution_indvs_perc_stack.png", plot = last_plot(), bg = "transparent")
+ggsave("mutation_distribution_indvs_perc_stack.pdf", plot = last_plot(), bg = "transparent")
+
+
+# Combine TarZoo and FWP data for grouped plotting (side-by-side bars)
+pairwise_data <- rbind(tarZoo_data, fwp_data)
+
+# Plot the mutation counts for TarZoo and FWP (side-by-side bars)
+ggplot(pairwise_data, aes(x = Mutation, y = Count, fill = File)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  theme_minimal() +
+  labs(title = "Mutation Counts for TarZoo and FWP", x = "Mutation Type", y = "Count") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Plot the mutation percentages for TarZoo and FWP (side-by-side bars)
+ggplot(pairwise_data, aes(x = Mutation, y = Percentage, fill = File)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  theme_minimal() +
+  labs(title = "Mutation Percentages for TarZoo and FWP", x = "Mutation Type", y = "Percentage (%)") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+# Plot the mutation percentages for TarZoo and FWP (side-by-side bars)
+ggplot(pairwise_data, aes(x = Mutation, y = Percentage, fill = File)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  theme_minimal() +
+  labs(title = "Mutation Percentages for TarZoo and FWP", x = "Mutation Type", y = "Percentage (%)") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+# Reorder the File factor levels so that the samples come first, and then "TarZoo Combined", "FWP Combined", and "Combined" appear last
+mutation_data$File <- factor(mutation_data$File, 
+                             levels = c(
+                               "data_denovo_TarZoo-M-B70170.tab",    
+                               "data_denovo_TarZoo-F-B80238.tab", 
+                               "data_denovo_FWP-F-46857.tab", 
+                               "data_denovo_FWP-M-46879.tab", 
+                               "TarZoo Combined",  # TarZoo Combined comes after the individual TarZoo samples
+                               "FWP Combined",     # FWP Combined comes after the individual FWP samples
+                               "Combined"          # Combined comes last
+                             ))
+
+# Plot the mutation percentages with the specified order
+ggplot(mutation_data, aes(x = Mutation, y = Percentage, fill = File)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  theme_minimal() +
+  labs(title = "Mutation Percentage per File", x = "Mutation Type", y = "Percentage (%)") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+ggplot(mutation_data, aes(x = Mutation, y = Percentage, fill = Mutation)) +
+  geom_bar(stat = "identity") +
+  facet_wrap(~File, scales = "free_x") +  # Creates separate panels for each File
+  theme_minimal() +
+  labs(title = "Mutation Percentage per File", x = "Mutation Type", y = "Percentage (%)") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+# Calculate the combined percentage for all samples (TarZoo + FWP)
+combined_percentage_all <- (as.integer(combined_counts) / sum(combined_counts)) * 100
+
+# Create a data.table for the combined total dataset
+combined_data_all <- data.table(
+  Mutation = names(combined_counts),
+  Combined_Percentage = combined_percentage_all
+)
+
+# Reshape the data for plotting (long format)
+combined_data_all_long <- melt(combined_data_all, id.vars = "Mutation", variable.name = "Group", value.name = "Percentage")
+
+
+
+
+#### Plot for FIGURE1
+# Plot the combined mutation percentages across all samples (side-by-side bars)
+mut_spec <- ggplot(combined_data_all_long, aes(x = Mutation, y = Percentage)) +
+  geom_bar(stat = "identity", position = "dodge", fill = "#A9A9A9") +
+  theme_minimal() +
+  labs(x = "Mutation Type", y = "Percentage (%)") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+ggsave("mutation_distribution.png", plot = last_plot(), bg = "transparent")
+ggsave("mutation_distribution.pdf", plot = last_plot(), bg = "transparent")
+
+
+# Define transition and transversion categories
+transitions <- c("C>T", "T>C", "A>G", "G>A")
+transversions <- c("C>A", "A>C", "C>G", "G>C", "A>T", "T>A", "G>T", "T>G")
+
+# Count transitions and transversions
+transition_count <- sum(combined_counts[names(combined_counts) %in% transitions])
+transversion_count <- sum(combined_counts[names(combined_counts) %in% transversions])
+
+# Compute Ti/Tv ratio
+ti_tv_ratio <- transition_count / transversion_count
+
+# Print results
+cat("Total Transitions:", transition_count, "\n")
+cat("Total Transversions:", transversion_count, "\n")
+cat("Ti/Tv Ratio:", ti_tv_ratio, "\n")
+
+
+
+
+```
+
+
+```{r}
+library(patchwork)
+
+# Combine plots side by side
+combined_mut_plot <- mammal_mutrats_vert + mut_spec + plot_layout(ncol = 2, widths = c(1, 1))
+
+# Print or save
+print(combined_mut_plot)
+ggsave("combined_mut_plot.png", combined_mut_plot, width = 12, height = 5, dpi = 300)
+ggsave("combined_mut_plot.pdf", combined_mut_plot, width = 12, height = 5, dpi = 300)
+
+```
+
+
+
+
+```{r}
+# Combine TarZoo and FWP counts and percentages
+tarZoo_total <- sum(combined_tarZoo_counts)
+fwp_total <- sum(combined_fwp_counts)
+
+# Create a data frame with mutation counts for both groups
+mutation_comparison <- data.table(
+  Mutation = names(combined_tarZoo_counts),
+  TarZoo_Count = as.integer(combined_tarZoo_counts),
+  FWP_Count = as.integer(combined_fwp_counts)
+)
+
+# Calculate percentages for both groups
+mutation_comparison[, TarZoo_Percentage := (TarZoo_Count / tarZoo_total) * 100]
+mutation_comparison[, FWP_Percentage := (FWP_Count / fwp_total) * 100]
+
+# Print the mutation comparison table with percentages
+print(mutation_comparison)
+
+# Chi-squared test for differences in proportions between TarZoo and FWP samples
+# Combine TarZoo and FWP counts into a matrix (rows for mutations, columns for TarZoo and FWP)
+test_matrix_pairwise <- as.matrix(mutation_comparison[, .(TarZoo_Count, FWP_Count)])
+
+# Perform the Chi-squared test for pairwise comparison
+chi_squared_test_pairwise <- chisq.test(test_matrix_pairwise)
+print("Chi-squared test result (TarZoo vs. FWP):")
+print(chi_squared_test_pairwise)
+
+# If expected counts are small, consider using Fisher's Exact Test
+fisher_test_pairwise <- fisher.test(test_matrix_pairwise)
+print("Fisher's Exact Test result (TarZoo vs. FWP):")
+print(fisher_test_pairwise)
+
+# ------------------------------------------------------------------------------
+# Now perform the Chi-squared test for homogeneity across all four individuals
+
+# Create a data table for each individual's counts
+individual_counts <- data.table(
+  Mutation = names(mutation_map),
+  TarZoo_M_Count = as.integer(combined_tarZoo_counts[1:2]),  # TarZoo-M samples
+  TarZoo_F_Count = as.integer(combined_tarZoo_counts[3:4]),  # TarZoo-F samples
+  FWP_M_Count = as.integer(combined_fwp_counts[1:2]),  # FWP-M samples
+  FWP_F_Count = as.integer(combined_fwp_counts[3:4])   # FWP-F samples
+)
+
+# Calculate total counts for each individual
+total_counts <- colSums(individual_counts[, -1, with = FALSE])
+
+# Calculate percentages for each individual
+individual_counts[, TarZoo_M_Percentage := (TarZoo_M_Count / total_counts["TarZoo_M_Count"]) * 100]
+individual_counts[, TarZoo_F_Percentage := (TarZoo_F_Count / total_counts["TarZoo_F_Count"]) * 100]
+individual_counts[, FWP_M_Percentage := (FWP_M_Count / total_counts["FWP_M_Count"]) * 100]
+individual_counts[, FWP_F_Percentage := (FWP_F_Count / total_counts["FWP_F_Count"]) * 100]
+
+# Print the individual comparison table with percentages
+print("Mutation counts and percentages for each individual:")
+print(individual_counts)
+
+# Prepare a matrix for the Chi-squared test (rows = mutations, columns = individuals)
+test_matrix_all <- as.matrix(individual_counts[, .(TarZoo_M_Count, TarZoo_F_Count, FWP_M_Count, FWP_F_Count)])
+
+# Perform the Chi-squared test for homogeneity across all four individuals
+chi_squared_test_all <- chisq.test(test_matrix_all)
+print("Chi-squared test result (all individuals):")
+print(chi_squared_test_all)
+
+
+```
+
+```{r}
+#### lets check if any of the mutations are shared between siblings
+
+# Read files into data frames
+tarzoo_m <- read_tsv(input_files[1])
+fwp_f <- read_tsv(input_files[2])
+fwp_m <- read_tsv(input_files[3])
+tarzoo_f <- read_tsv(input_files[4])
+
+# Find shared mutations between the two FWP files
+shared_fwp <- inner_join(fwp_f, fwp_m, by = c("CHROM", "POS"))
+
+# Find shared mutations between the two TarZoo files
+shared_tarzoo <- inner_join(tarzoo_m, tarzoo_f, by = c("CHROM", "POS"))
+
+# Output results
+if (nrow(shared_fwp) > 0) {
+  print("Shared mutations in FWP:")
+  print(shared_fwp)
+} else {
+  print("No shared mutations in FWP.")
+}
+
+if (nrow(shared_tarzoo) > 0) {
+  print("Shared mutations in TarZoo:")
+  print(shared_tarzoo)
+} else {
+  print("No shared mutations in TarZoo.")
+}
+
+
+```
+

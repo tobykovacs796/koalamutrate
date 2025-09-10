@@ -1,0 +1,26 @@
+#!/bin/bash
+
+#PBS -P RDS-FSC-Nocticola-RW
+#PBS -N log2.smc_est_plt_tpe3e6_50knots_S_NSW
+#PBS -l select=1:ncpus=24:mem=50GB
+#PBS -l walltime=50:00:00
+#PBS -m abe
+#PBS -M tkov3622@hpc.sydney.edu.au
+#PBS -q defaultQ
+
+module load python/3.9.15 mpfr/4.0.2 gsl/1.16 gcc/9.1.0
+
+cd /scratch/RDS-FSC-awggdata-RW/koala_dnazoo/wgs/SMCpp/full/smc/estimate/S_NSW
+
+
+mkdir tpe3e6_50knots
+
+# Activate my own virtual env
+source ../smc-env/bin/activate
+
+#run estimate with no timepoints
+smc++ estimate 6.12e-9 --knots 50 --timepoints 1e3 1e6 data/*.smc.gz -o /scratch/RDS-FSC-awggdata-RW/koala_dnazoo/wgs/SMCpp/full/smc/estimate/S_NSW/tpe3e6_50knots
+
+cd tpe3e6_50knots
+#plot
+smc++ plot plot_full_S_NSW_tpe3e6_50knots.pdf --csv -g 7 model.final.json

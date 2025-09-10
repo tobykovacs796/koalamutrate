@@ -1,0 +1,90 @@
+#!/bin/bash
+
+#PBS -P RDS-FSC-Nocticola-RW
+#PBS -N log1.split.vcf2smc.all
+#PBS -l select=1:ncpus=1:mem=2GB
+#PBS -l walltime=4:00:00
+#PBS -q defaultQ
+#PBS -J 1-603
+
+module load python/3.9.15 mpfr/4.0.2 gsl/1.16 gcc/9.1.0
+
+cd /scratch/RDS-FSC-awggdata-RW/koala_dnazoo/wgs/SMCpp/full/smc/split
+
+# Set up temporary directory
+export TMPDIR=/scratch/RDS-FSC-awggdata-RW/koala_dnazoo/wgs/SMCpp/smc/tmp/job_${PBS_JOBID}
+mkdir -p $TMPDIR
+
+## Allocate a contig to each array element, there are 603 contigs
+params=$(sed "${PBS_ARRAY_INDEX}q;d" /scratch/RDS-FSC-awggdata-RW/koala_dnazoo/wgs/SMCpp/full/vcf/koala.50k_noX.bed)
+param_array=( $params )
+
+# Define the path to your list of individuals in N_QLD
+N_QLD_file='/scratch/RDS-FSC-awggdata-RW/koala_dnazoo/wgs/SMCpp/full/pop_lists/N_QLD.txt'
+# Read the file line by line and format as a comma-separated list
+N_QLD=$(while IFS= read -r line; do echo -n "$line,"; done < "$N_QLD_file")
+# Remove the trailing comma
+N_QLD=${N_QLD%,}
+
+# Define the path to your list of individuals in SEQLD_NNSW
+SEQLD_NNSW_file='/scratch/RDS-FSC-awggdata-RW/koala_dnazoo/wgs/SMCpp/full/pop_lists/SEQLD_NNSW.txt'
+# Read the file line by line and format as a comma-separated list
+SEQLD_NNSW=$(while IFS= read -r line; do echo -n "$line,"; done < "$SEQLD_NNSW_file")
+# Remove the trailing comma
+SEQLD_NNSW=${SEQLD_NNSW%,}
+
+# Define the path to your list of individuals in M_NSW
+M_NSW_file='/scratch/RDS-FSC-awggdata-RW/koala_dnazoo/wgs/SMCpp/full/pop_lists/M_NSW.txt'
+# Read the file line by line and format as a comma-separated list
+M_NSW=$(while IFS= read -r line; do echo -n "$line,"; done < "$M_NSW_file")
+# Remove the trailing comma
+M_NSW=${M_NSW%,}
+
+# Define the path to your list of individuals in S_NSW
+S_NSW_file='/scratch/RDS-FSC-awggdata-RW/koala_dnazoo/wgs/SMCpp/full/pop_lists/S_NSW.txt'
+# Read the file line by line and format as a comma-separated list
+S_NSW=$(while IFS= read -r line; do echo -n "$line,"; done < "$S_NSW_file")
+# Remove the trailing comma
+S_NSW=${S_NSW%,}
+
+# Define the path to your list of individuals in VIC_noSA
+VIC_noSA_file='/scratch/RDS-FSC-awggdata-RW/koala_dnazoo/wgs/SMCpp/full/pop_lists/VIC_noSA.txt'
+# Read the file line by line and format as a comma-separated list
+VIC_noSA=$(while IFS= read -r line; do echo -n "$line,"; done < "$VIC_noSA_file")
+# Remove the trailing comma
+VIC_noSA=${VIC_noSA%,}
+
+
+source smc-env/bin/activate
+
+#To use split, create datasets containing the other joint frequency spectrum for both populations, using an array:
+
+smc++ vcf2smc /scratch/RDS-FSC-awggdata-RW/koala_dnazoo/wgs/SMCpp/full/vcf/kjg_474_noX_50k_bi.vcf.gz data/"N_QLD_SEQLD_NNSW_${param_array[0]}.smc.gz" "${param_array[0]}" "N_QLD:$N_QLD" "SEQLD_NNSW:$SEQLD_NNSW"
+smc++ vcf2smc /scratch/RDS-FSC-awggdata-RW/koala_dnazoo/wgs/SMCpp/full/vcf/kjg_474_noX_50k_bi.vcf.gz data/"SEQLD_NNSW_N_QLD_${param_array[0]}.smc.gz" "${param_array[0]}" "SEQLD_NNSW:$SEQLD_NNSW" "N_QLD:$N_QLD"
+
+smc++ vcf2smc /scratch/RDS-FSC-awggdata-RW/koala_dnazoo/wgs/SMCpp/full/vcf/kjg_474_noX_50k_bi.vcf.gz data/"N_QLD_M_NSW_${param_array[0]}.smc.gz" "${param_array[0]}" "N_QLD:$N_QLD" "M_NSW:$M_NSW"
+smc++ vcf2smc /scratch/RDS-FSC-awggdata-RW/koala_dnazoo/wgs/SMCpp/full/vcf/kjg_474_noX_50k_bi.vcf.gz data/"M_NSW_N_QLD_${param_array[0]}.smc.gz" "${param_array[0]}" "M_NSW:$M_NSW" "N_QLD:$N_QLD"
+
+smc++ vcf2smc /scratch/RDS-FSC-awggdata-RW/koala_dnazoo/wgs/SMCpp/full/vcf/kjg_474_noX_50k_bi.vcf.gz data/"N_QLD_S_NSW_${param_array[0]}.smc.gz" "${param_array[0]}" "N_QLD:$N_QLD" "S_NSW:$S_NSW"
+smc++ vcf2smc /scratch/RDS-FSC-awggdata-RW/koala_dnazoo/wgs/SMCpp/full/vcf/kjg_474_noX_50k_bi.vcf.gz data/"S_NSW_N_QLD_${param_array[0]}.smc.gz" "${param_array[0]}" "S_NSW:$S_NSW" "N_QLD:$N_QLD"
+
+smc++ vcf2smc /scratch/RDS-FSC-awggdata-RW/koala_dnazoo/wgs/SMCpp/full/vcf/kjg_474_noX_50k_bi.vcf.gz data/"N_QLD_VIC_noSA_${param_array[0]}.smc.gz" "${param_array[0]}" "N_QLD:$N_QLD" "VIC_noSA:$VIC_noSA"
+smc++ vcf2smc /scratch/RDS-FSC-awggdata-RW/koala_dnazoo/wgs/SMCpp/full/vcf/kjg_474_noX_50k_bi.vcf.gz data/"VIC_noSA_N_QLD_${param_array[0]}.smc.gz" "${param_array[0]}" "VIC_noSA:$VIC_noSA" "N_QLD:$N_QLD"
+
+smc++ vcf2smc /scratch/RDS-FSC-awggdata-RW/koala_dnazoo/wgs/SMCpp/full/vcf/kjg_474_noX_50k_bi.vcf.gz data/"SEQLD_NNSW_M_NSW_${param_array[0]}.smc.gz" "${param_array[0]}" "SEQLD_NNSW:$SEQLD_NNSW" "M_NSW:$M_NSW"
+smc++ vcf2smc /scratch/RDS-FSC-awggdata-RW/koala_dnazoo/wgs/SMCpp/full/vcf/kjg_474_noX_50k_bi.vcf.gz data/"M_NSW_SEQLD_NNSW_${param_array[0]}.smc.gz" "${param_array[0]}" "M_NSW:$M_NSW" "SEQLD_NNSW:$SEQLD_NNSW"
+
+smc++ vcf2smc /scratch/RDS-FSC-awggdata-RW/koala_dnazoo/wgs/SMCpp/full/vcf/kjg_474_noX_50k_bi.vcf.gz data/"SEQLD_NNSW_S_NSW_${param_array[0]}.smc.gz" "${param_array[0]}" "SEQLD_NNSW:$SEQLD_NNSW" "S_NSW:$S_NSW"
+smc++ vcf2smc /scratch/RDS-FSC-awggdata-RW/koala_dnazoo/wgs/SMCpp/full/vcf/kjg_474_noX_50k_bi.vcf.gz data/"S_NSW_SEQLD_NNSW_${param_array[0]}.smc.gz" "${param_array[0]}" "S_NSW:$S_NSW" "SEQLD_NNSW:$SEQLD_NNSW"
+
+smc++ vcf2smc /scratch/RDS-FSC-awggdata-RW/koala_dnazoo/wgs/SMCpp/full/vcf/kjg_474_noX_50k_bi.vcf.gz data/"SEQLD_NNSW_VIC_noSA_${param_array[0]}.smc.gz" "${param_array[0]}" "SEQLD_NNSW:$SEQLD_NNSW" "VIC_noSA:$VIC_noSA"
+smc++ vcf2smc /scratch/RDS-FSC-awggdata-RW/koala_dnazoo/wgs/SMCpp/full/vcf/kjg_474_noX_50k_bi.vcf.gz data/"VIC_noSA_SEQLD_NNSW_${param_array[0]}.smc.gz" "${param_array[0]}" "VIC_noSA:$VIC_noSA" "SEQLD_NNSW:$SEQLD_NNSW"
+
+smc++ vcf2smc /scratch/RDS-FSC-awggdata-RW/koala_dnazoo/wgs/SMCpp/full/vcf/kjg_474_noX_50k_bi.vcf.gz data/"M_NSW_S_NSW_${param_array[0]}.smc.gz" "${param_array[0]}" "M_NSW:$M_NSW" "S_NSW:$S_NSW"
+smc++ vcf2smc /scratch/RDS-FSC-awggdata-RW/koala_dnazoo/wgs/SMCpp/full/vcf/kjg_474_noX_50k_bi.vcf.gz data/"S_NSW_M_NSW_${param_array[0]}.smc.gz" "${param_array[0]}" "S_NSW:$S_NSW" "M_NSW:$M_NSW"
+
+smc++ vcf2smc /scratch/RDS-FSC-awggdata-RW/koala_dnazoo/wgs/SMCpp/full/vcf/kjg_474_noX_50k_bi.vcf.gz data/"M_NSW_VIC_noSA_${param_array[0]}.smc.gz" "${param_array[0]}" "M_NSW:$M_NSW" "VIC_noSA:$VIC_noSA"
+smc++ vcf2smc /scratch/RDS-FSC-awggdata-RW/koala_dnazoo/wgs/SMCpp/full/vcf/kjg_474_noX_50k_bi.vcf.gz data/"VIC_noSA_M_NSW_${param_array[0]}.smc.gz" "${param_array[0]}" "VIC_noSA:$VIC_noSA" "M_NSW:$M_NSW"
+
+smc++ vcf2smc /scratch/RDS-FSC-awggdata-RW/koala_dnazoo/wgs/SMCpp/full/vcf/kjg_474_noX_50k_bi.vcf.gz data/"S_NSW_VIC_noSA_${param_array[0]}.smc.gz" "${param_array[0]}" "S_NSW:$S_NSW" "VIC_noSA:$VIC_noSA"
+smc++ vcf2smc /scratch/RDS-FSC-awggdata-RW/koala_dnazoo/wgs/SMCpp/full/vcf/kjg_474_noX_50k_bi.vcf.gz data/"VIC_noSA_S_NSW_${param_array[0]}.smc.gz" "${param_array[0]}" "VIC_noSA:$VIC_noSA" "S_NSW:$S_NSW"
