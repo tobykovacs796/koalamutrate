@@ -1,0 +1,1266 @@
+---
+title: "PSMC"
+output: html_document
+date: "2024-03-12"
+---
+
+
+```{r}
+library(ggplot2)
+library(dplyr)
+
+# Set the directory where your files are located
+directory4 <- "~/Library/CloudStorage/OneDrive-TheUniversityofSydney(Staff)/1_PhD/koala/mutation_rate/Demographics/Koala_PSMC/4"
+directory22 <- "~/Library/CloudStorage/OneDrive-TheUniversityofSydney(Staff)/1_PhD/koala/mutation_rate/Demographics/Koala_PSMC/22"
+directory1111 <- "~/Library/CloudStorage/OneDrive-TheUniversityofSydney(Staff)/1_PhD/koala/mutation_rate/Demographics/Koala_PSMC/1111"
+
+# List all .txt files in the directory
+txt_files4 <- list.files(directory4, pattern = "\\.txt$", full.names = TRUE)
+
+# List all .txt files in the directory
+txt_files22 <- list.files(directory22, pattern = "\\.txt$", full.names = TRUE)
+
+# List all .txt files in the directory
+txt_files1111 <- list.files(directory1111, pattern = "\\.txt$", full.names = TRUE)
+
+# Create an empty data frame to store the accumulated data
+accumulated_data4 <- data.frame(matrix(ncol = 3, nrow = 0))
+accumulated_data22 <- data.frame(matrix(ncol = 3, nrow = 0))
+accumulated_data1111 <- data.frame(matrix(ncol = 3, nrow = 0))
+
+# Loop through each .txt file
+for (file in txt_files4) {
+  # Read the table from the file
+  data <- read.table(file, header = FALSE, sep = "\t")
+  
+  # Extract the first two columns
+  first_two_columns <- data[, 1:2]
+  
+  # Get the name of the sample (assuming the file name without extension as the sample name)
+  sample_name <- tools::file_path_sans_ext(basename(file))
+  
+  # Add a column with the sample name
+  first_two_columns$ind <- sample_name
+  
+  # Append the data to the accumulated data frame
+  accumulated_data4 <- rbind(accumulated_data4, first_two_columns)
+}
+# Loop through each .txt file
+for (file in txt_files22) {
+  # Read the table from the file
+  data <- read.table(file, header = FALSE, sep = "\t")
+  
+  # Extract the first two columns
+  first_two_columns <- data[, 1:2]
+  
+  # Get the name of the sample (assuming the file name without extension as the sample name)
+  sample_name <- tools::file_path_sans_ext(basename(file))
+  
+  # Add a column with the sample name
+  first_two_columns$ind <- sample_name
+  
+  # Append the data to the accumulated data frame
+  accumulated_data22 <- rbind(accumulated_data22, first_two_columns)
+}
+# Loop through each .txt file
+for (file in txt_files1111) {
+  # Read the table from the file
+  data <- read.table(file, header = FALSE, sep = "\t")
+  
+  # Extract the first two columns
+  first_two_columns <- data[, 1:2]
+  
+  # Get the name of the sample (assuming the file name without extension as the sample name)
+  sample_name <- tools::file_path_sans_ext(basename(file))
+  
+  # Add a column with the sample name
+  first_two_columns$ind <- sample_name
+  
+  # Append the data to the accumulated data frame
+  accumulated_data1111 <- rbind(accumulated_data1111, first_two_columns)
+}
+
+colnames(accumulated_data4) <- c("time", "Ne", "ind")
+colnames(accumulated_data22) <- c("time", "Ne", "ind")
+colnames(accumulated_data1111) <- c("time", "Ne", "ind")
+
+accumulated_data4$ind <- gsub("\\.0", "", accumulated_data4$ind)
+accumulated_data4$ind <- gsub("\\.612.4", "", accumulated_data4$ind)
+accumulated_data4$ind <- gsub("Cape_Otway", "COtway", accumulated_data4$ind)
+accumulated_data4$ind <- gsub("-", "_", accumulated_data4$ind)
+accumulated_data4$ind <- gsub("-", "_", accumulated_data4$ind)
+accumulated_data4$ind <- gsub("Fris_", "", accumulated_data4$ind)
+accumulated_data4$ind <- gsub("FRIS_", "", accumulated_data4$ind)
+accumulated_data4$ind <- gsub("HDS_", "", accumulated_data4$ind)
+accumulated_data4$ind <- gsub("_001", "", accumulated_data4$ind)
+accumulated_data4$ind <- gsub("Inverell_", "", accumulated_data4$ind)
+accumulated_data4$ind <- gsub("_GUH", "", accumulated_data4$ind)
+accumulated_data4$ind <- gsub("GUH_", "", accumulated_data4$ind)
+accumulated_data4$ind <- gsub("Byron_", "", accumulated_data4$ind)
+accumulated_data4$ind <- gsub("Clarence_Valley_M_", "", accumulated_data4$ind)
+accumulated_data4$ind <- gsub("Monaro_", "", accumulated_data4$ind)
+accumulated_data4$ind <- gsub("STHD_", "", accumulated_data4$ind)
+accumulated_data4$ind <- gsub("SHGLD_", "", accumulated_data4$ind)
+accumulated_data4$ind <- gsub("SHBS_", "", accumulated_data4$ind)
+accumulated_data4$ind <- gsub("PTS_", "", accumulated_data4$ind)
+accumulated_data4$ind <- gsub("MBR_", "", accumulated_data4$ind)
+
+accumulated_data22$ind <- gsub("\\.0", "", accumulated_data22$ind)
+accumulated_data22$ind <- gsub("\\.612.22", "", accumulated_data22$ind)
+accumulated_data22$ind <- gsub("Cape_Otway", "COtway", accumulated_data22$ind)
+accumulated_data22$ind <- gsub("-", "_", accumulated_data22$ind)
+accumulated_data22$ind <- gsub("-", "_", accumulated_data22$ind)
+accumulated_data22$ind <- gsub("Fris_", "", accumulated_data22$ind)
+accumulated_data22$ind <- gsub("FRIS_", "", accumulated_data22$ind)
+accumulated_data22$ind <- gsub("HDS_", "", accumulated_data22$ind)
+accumulated_data22$ind <- gsub("_001", "", accumulated_data22$ind)
+accumulated_data22$ind <- gsub("Inverell_", "", accumulated_data22$ind)
+accumulated_data22$ind <- gsub("_GUH", "", accumulated_data22$ind)
+accumulated_data22$ind <- gsub("GUH_", "", accumulated_data22$ind)
+accumulated_data22$ind <- gsub("Byron_", "", accumulated_data22$ind)
+accumulated_data22$ind <- gsub("Clarence_Valley_M_", "", accumulated_data22$ind)
+accumulated_data22$ind <- gsub("Monaro_", "", accumulated_data22$ind)
+accumulated_data22$ind <- gsub("STHD_", "", accumulated_data22$ind)
+accumulated_data22$ind <- gsub("SHGLD_", "", accumulated_data22$ind)
+accumulated_data22$ind <- gsub("SHBS_", "", accumulated_data22$ind)
+accumulated_data22$ind <- gsub("PTS_", "", accumulated_data22$ind)
+accumulated_data22$ind <- gsub("MBR_", "", accumulated_data22$ind)
+
+accumulated_data1111$ind <- gsub("\\.0", "", accumulated_data1111$ind)
+accumulated_data1111$ind <- gsub("\\.612.1111", "", accumulated_data1111$ind)
+accumulated_data1111$ind <- gsub("Cape_Otway", "COtway", accumulated_data1111$ind)
+accumulated_data1111$ind <- gsub("-", "_", accumulated_data1111$ind)
+accumulated_data1111$ind <- gsub("-", "_", accumulated_data1111$ind)
+accumulated_data1111$ind <- gsub("Fris_", "", accumulated_data1111$ind)
+accumulated_data1111$ind <- gsub("FRIS_", "", accumulated_data1111$ind)
+accumulated_data1111$ind <- gsub("HDS_", "", accumulated_data1111$ind)
+accumulated_data1111$ind <- gsub("_001", "", accumulated_data1111$ind)
+accumulated_data1111$ind <- gsub("Inverell_", "", accumulated_data1111$ind)
+accumulated_data1111$ind <- gsub("_GUH", "", accumulated_data1111$ind)
+accumulated_data1111$ind <- gsub("GUH_", "", accumulated_data1111$ind)
+accumulated_data1111$ind <- gsub("Byron_", "", accumulated_data1111$ind)
+accumulated_data1111$ind <- gsub("Clarence_Valley_M_", "", accumulated_data1111$ind)
+accumulated_data1111$ind <- gsub("Monaro_", "", accumulated_data1111$ind)
+accumulated_data1111$ind <- gsub("STHD_", "", accumulated_data1111$ind)
+accumulated_data1111$ind <- gsub("SHGLD_", "", accumulated_data1111$ind)
+accumulated_data1111$ind <- gsub("SHBS_", "", accumulated_data1111$ind)
+accumulated_data1111$ind <- gsub("PTS_", "", accumulated_data1111$ind)
+accumulated_data1111$ind <- gsub("MBR_", "", accumulated_data1111$ind)
+
+
+## Add in the population based on Elle's strucutre analyses
+
+pops <- read.csv("wild_413_populations_faststructureK5.csv")
+pops$ind <- gsub("-", "_", pops$ind)
+pops$ind <- gsub("_Fris", "", pops$ind)
+pops$ind <- gsub("_FRIS", "", pops$ind)
+pops$ind <- gsub("_HDS", "", pops$ind)
+pops$ind <- gsub("Armid_M_M7070", "Armidale_M_M7070", pops$ind)
+pops$ind <- gsub("Broad_", "Broadwater_", pops$ind)
+pops$ind <- gsub("BMnt", "Blue_Mountains", pops$ind)
+pops$ind <- gsub("CBTown", "Campbelltown", pops$ind)
+pops$ind <- gsub("Coffs_M_44984", "Coffs_Harbour_M_44984", pops$ind)
+pops$ind <- gsub("Coffs_F_44980", "Coffs_Harbour_F_44980", pops$ind)
+pops$ind <- gsub("NRiv", "Northern_Rivers", pops$ind)
+pops$ind <- gsub("SWSyd", "SW_Sydney", pops$ind)
+pops$ind <- gsub("LPlains", "Liverpool_Plains", pops$ind)
+pops$ind <- gsub("GUH_", "", pops$ind)
+pops$ind <- gsub("M50374_001", "Kyogle_M_M50374", pops$ind)
+pops$ind <- gsub("M_M50355", "Kyogle_M_M50355", pops$ind)
+pops$ind <- gsub("SClarence", "South_Clarence", pops$ind)
+pops$ind <- gsub("_001", "", pops$ind)
+pops$ind <- gsub("Fraser", "Fraser_Coast", pops$ind)
+pops$ind <- gsub("FCoast", "Fraser_Coast", pops$ind)
+pops$ind <- gsub("Gipps", "Gippsland", pops$ind)
+pops$ind <- gsub("GCoast", "Gold_Coast", pops$ind)
+pops$ind <- gsub("HVale", "Hidden_Vale", pops$ind)
+pops$ind <- gsub("M50383", "Broadwater_F_M50383", pops$ind)
+pops$ind <- gsub("M50395", "Broadwater_M_M50395", pops$ind)
+pops$ind <- gsub("_GUH", "", pops$ind)
+pops$ind <- gsub("M50370", "F_M50370", pops$ind)
+pops$ind <- gsub("M50306", "F_M50306", pops$ind)
+pops$ind <- gsub("Byron_", "", pops$ind)
+pops$ind <- gsub("M47687", "M_M47687", pops$ind)
+pops$ind <- gsub("M50293", "M_M50293", pops$ind)
+pops$ind <- gsub("M50373", "M_M50373", pops$ind)
+pops$ind <- gsub("M50392", "M_M50392", pops$ind)
+pops$ind <- gsub("M50393", "M_M50393", pops$ind)
+pops$ind <- gsub("Lismo_", "Lismore_", pops$ind)
+pops$ind <- gsub("Lismore_U_M50295", "Lismore_M_M50295", pops$ind)
+pops$ind <- gsub("Lismore_F_M50535", "Lismore_M_M50535", pops$ind)
+pops$ind <- gsub("_Monaro", "", pops$ind)
+pops$ind <- gsub("WDowns", "Western_Downs", pops$ind)
+pops$ind <- gsub("M50543", "Wollemi_NP_U_M50543", pops$ind)
+pops$ind <- gsub("Toowoo_", "Toowoomba_", pops$ind)
+pops$ind <- gsub("Tenter_", "Tenterfield_", pops$ind)
+pops$ind <- gsub("SW_Sydney_F_M48896", "SWSyd_F_M48896", pops$ind)
+pops$ind <- gsub("SW_Sydney_F_M48896", "SWSyd_F_M48896", pops$ind)
+pops$ind <- gsub("_STHD", "", pops$ind)
+pops$ind <- gsub("SDowns_F_62050", "Southern_Downs_F_62050", pops$ind)
+pops$ind <- gsub("SWVic", "South_West_Victoria", pops$ind)
+pops$ind <- gsub("M47634", "South_Kempsey_M_M47634", pops$ind)
+pops$ind <- gsub("SthBurn", "South_Burnett", pops$ind)
+pops$ind <- gsub("_SHGLD", "", pops$ind)
+pops$ind <- gsub("_SHBS", "", pops$ind)
+pops$ind <- gsub("_PTS", "", pops$ind)
+pops$ind <- gsub("PMac", "Port_Macquarie", pops$ind)
+pops$ind <- gsub("Pillig_", "Pilliga_", pops$ind)
+pops$ind <- gsub("M49020", "Liverpool_Plains_M_M49020", pops$ind)
+pops$ind <- gsub("M49021", "Liverpool_Plains_M_M49021", pops$ind)
+pops$ind <- gsub("M49023", "Liverpool_Plains_F_M49023", pops$ind)
+pops$ind <- gsub("PortMac", "Port_Macquarie", pops$ind)
+pops$ind <- gsub("MurRiv", "Murray_River", pops$ind)
+pops$ind <- gsub("_MBR", "", pops$ind)
+pops$ind <- gsub("NthBurn", "North_Burnett", pops$ind)
+pops$ind <- gsub("Narran", "Narrandera", pops$ind)
+pops$ind <- gsub("LivSton", "Livingstone", pops$ind)
+pops$ind <- gsub("Narranderadra", "Narrandra", pops$ind)
+pops$ind <- gsub("F_StevieN", "F_Stevie_N", pops$ind)
+pops$ind <- gsub("Kyogle_U_M50488", "Kyogle_M_M50488", pops$ind)
+pops$ind <- gsub("M50355", "Kyogle_M_M50355", pops$ind)
+pops$ind <- gsub("Kyogle_U_M49289", "Kyogle_F_M49289", pops$ind)
+pops$ind <- gsub("Graft", "Grafton", pops$ind)
+
+merged4 <- merge(accumulated_data4, pops, by = "ind", all.x = TRUE)
+merged22 <- merge(accumulated_data22, pops, by = "ind", all.x = TRUE)
+merged1111 <- merge(accumulated_data1111, pops, by = "ind", all.x = TRUE)
+
+merged4 <- merged4 %>%
+  mutate(state = ifelse(grepl('Narran', ind), 'Narrandera', 
+                 ifelse(grepl('Kangaroo|MntLoft', ind), 'SA', state)))
+
+merged22 <- merged22 %>%
+  mutate(state = ifelse(grepl('Narran', ind), 'Narrandera', 
+                 ifelse(grepl('Kangaroo|MntLoft', ind), 'SA', state)))
+
+merged1111 <- merged1111 %>%
+  mutate(state = ifelse(grepl('Narran', ind), 'Narrandera', 
+                 ifelse(grepl('Kangaroo|MntLoft', ind), 'SA', state)))
+
+
+coverage <- read.csv("coverage_summary.csv",col.names = c("ind","coverage"))
+
+coverage$ind <- gsub("\\.0", "", coverage$ind)
+coverage$ind <- gsub("Cape_Otway", "COtway", coverage$ind)
+coverage$ind <- gsub("-", "_", coverage$ind)
+coverage$ind <- gsub("Fris_", "", coverage$ind)
+coverage$ind <- gsub("HDS_", "", coverage$ind)
+coverage$ind <- gsub("_001", "", coverage$ind)
+coverage$ind <- gsub("Inverell_", "", coverage$ind)
+coverage$ind <- gsub("_GUH", "", coverage$ind)
+coverage$ind <- gsub("GUH_", "", coverage$ind)
+coverage$ind <- gsub("Byron_", "", coverage$ind)
+coverage$ind <- gsub("F_50524", "Byron-F-50524", coverage$ind)
+coverage$ind <- gsub("Clarence_Valley_M_", "", coverage$ind)
+coverage$ind <- gsub("Monaro_", "", coverage$ind)
+coverage$ind <- gsub("STHD_", "", coverage$ind)
+coverage$ind <- gsub("SHGLD_", "", coverage$ind)
+coverage$ind <- gsub("SHBS_", "", coverage$ind)
+coverage$ind <- gsub("PTS_", "", coverage$ind)
+
+
+merged4_cov <- merge(merged4, coverage, by = "ind", all.x = TRUE)
+merged22_cov <- merge(merged22, coverage, by = "ind", all.x = TRUE)
+merged1111_cov <- merge(merged1111, coverage, by = "ind", all.x = TRUE)
+
+cov_pop <- merge(coverage, pops, by = "ind", all.x = TRUE)
+cov_pop <- cov_pop %>%
+  arrange(state, desc(coverage))
+
+
+```
+
+
+```{r}
+
+## Original analysis of default PSMC parameters
+# Create the ggplot
+
+
+
+## 1.All time log
+ggplot(merged4) +
+  geom_rect(xmin = log10(123000), xmax = log10(147000), ymin = 0, ymax = 30, fill = "lightpink", alpha = 0.5, colour = NA) +
+  geom_rect(xmin = log10(19000), xmax = log10(122000), ymin = 0, ymax = 30, fill = "lightblue", alpha = 0.5, colour = NA) +
+  geom_vline(xintercept = 60000, linetype = "dashed", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 100000, linetype = "solid", color = "black", alpha = 0.4) +  # Add vertical line
+  geom_vline(xintercept = 200000, linetype = "solid", color = "black", alpha = 0.4) +  # Add vertical line
+  geom_vline(xintercept = 500000, linetype = "solid", color = "black", alpha = 0.4) +  # Add vertical line
+  #geom_step(aes(x = time, y = Ne, group = ind, alpha = 0.001, color = state)) +
+  geom_smooth(aes(x = time, y = Ne, color = state), method = "gam", se = FALSE, linetype = "dashed") +  # Add smoothed trendline
+  geom_smooth(aes(x = time, y = Ne), method = "gam", se = FALSE, color = "red") +  # Add smoothed trendline
+  #facet_wrap(~state) + 
+  labs(x = "Years", y = "Effective population size (x10^4)", title = "Title") +
+  scale_x_log10(limits = c(10000, 5000000)) +
+  #scale_x_continuous(limits = c(10000, 1500000), expand = expansion(mult = c(0.2, 0.05))) +
+  scale_y_continuous(limits = c(0, 30), expand = expansion(mult = c(0, 0.05))) +
+  theme_classic() #+ 
+  #guides(color = "none")
+
+ggsave("Results/4/1.All_time_log.pdf", plot = last_plot())
+
+
+## 2.Zoomed in and no log
+ggplot(merged4) +
+  geom_rect(xmin = 123000, xmax = 147000, ymin = 0, ymax = 30, fill = "lightpink", alpha = 0.5, colour = NA) +
+  geom_rect(xmin = 19000, xmax = 122000, ymin = 0, ymax = 30, fill = "lightblue", alpha = 0.5, colour = NA) +
+  geom_vline(xintercept = 60000, linetype = "dashed", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 100000, linetype = "solid", color = "black", alpha = 0.4) +  # Add vertical line
+  geom_vline(xintercept = 200000, linetype = "solid", color = "black", alpha = 0.4) +  # Add vertical line
+  geom_vline(xintercept = 500000, linetype = "solid", color = "black", alpha = 0.4) +  # Add vertical line
+  #geom_step(aes(x = time, y = Ne, group = ind, alpha = 0.001, color = state)) +
+  geom_smooth(aes(x = time, y = Ne, color = state), method = "gam", se = FALSE, linetype = "dashed") +  # Add smoothed trendline
+  geom_smooth(aes(x = time, y = Ne), method = "gam", se = FALSE, color = "red") +  # Add smoothed trendline
+  #facet_wrap(~state) + 
+  labs(x = "Years", y = "Effective population size (x10^4)", title = "Title") +
+  #scale_x_log10(limits = c(10000, 1000000)) +
+  scale_x_continuous(limits = c(10000, 500000), expand = expansion(mult = c(0.05, 0.05))) +
+  scale_y_continuous(limits = c(0, 30), expand = expansion(mult = c(0, 0.05))) +
+  theme_classic() #+ 
+  #guides(color = "none")
+
+ggsave("Results/4/2.zoome_nolog.pdf", plot = last_plot())
+
+
+## 3.wrapped for each population
+# Create the ggplot
+ggplot(merged4) +
+  geom_rect(xmin = log10(123000), xmax = log10(147000), ymin = 0, ymax = 30, fill = "lightpink", alpha = 0.5, colour = NA) +
+  geom_rect(xmin = log10(19000), xmax = log10(122000), ymin = 0, ymax = 30, fill = "lightblue", alpha = 0.5, colour = NA) +
+  geom_vline(xintercept = 60000, linetype = "dashed", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 100000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 200000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 300000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 400000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 500000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 600000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 700000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_step(aes(x = time, y = Ne, group = ind, alpha = 0.001)) +
+  geom_smooth(aes(x = time, y = Ne, color = state), method = "gam", se = FALSE) +  # Add smoothed trendline
+  facet_wrap(~state) + 
+  labs(x = "Years", y = "Effective population size (x10^4)", title = "Title") +
+  scale_x_log10(limits = c(10000, 5000000)) +
+  scale_y_continuous(limits = c(0, 30), expand = expansion(mult = c(0, 0.05))) +
+  theme_classic() + 
+  guides(color = "none", alpha = "none")
+
+ggsave("Results/4/3.each_pop1.pdf", plot = last_plot())
+
+
+## 4.wrapped for each population, no geom_smooth
+# Create the ggplot
+ggplot(merged4) +
+  geom_rect(xmin = log10(123000), xmax = log10(147000), ymin = 0, ymax = 30, fill = "lightpink", alpha = 0.5, colour = NA) +
+  geom_rect(xmin = log10(19000), xmax = log10(122000), ymin = 0, ymax = 30, fill = "lightblue", alpha = 0.5, colour = NA) +
+  geom_vline(xintercept = 60000, linetype = "dashed", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 100000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 200000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 500000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 1000000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_step(aes(x = time, y = Ne, group = ind, alpha = 0.001, colour = state)) +
+  facet_wrap(~state) + 
+  labs(x = "Years", y = "Effective population size (x10^4)", title = "Title") +
+  scale_x_log10(limits = c(10000, 5000000)) +
+  scale_y_continuous(limits = c(0, 30), expand = expansion(mult = c(0, 0.05))) +
+  theme_classic() + 
+  guides(color = "none", alpha = "none")
+
+ggsave("Results/4/4.each_pop_nogam.pdf", plot = last_plot())
+
+
+## 5.zoomed and no log 
+ggplot(merged4) +
+  geom_rect(xmin = 123000, xmax = 147000, ymin = 0, ymax = 30, fill = "lightpink", alpha = 0.5, colour = NA) +
+  geom_rect(xmin = 19000, xmax = 122000, ymin = 0, ymax = 30, fill = "lightblue", alpha = 0.5, colour = NA) +
+  geom_vline(xintercept = 60000, linetype = "dashed", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 100000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 200000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 300000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 400000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 500000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 600000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 700000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_step(aes(x = time, y = Ne, group = ind, alpha = 0.001)) +
+  geom_smooth(aes(x = time, y = Ne, color = state), method = "gam", se = FALSE) +  # Add smoothed trendline
+  facet_wrap(~state) + 
+  labs(x = "Years", y = "Effective population size (x10^4)", title = "Title") +
+  scale_x_continuous(limits = c(10000, 500000), expand = expansion(mult = c(0.05, 0.05))) +
+  scale_y_continuous(limits = c(0, 30), expand = expansion(mult = c(0, 0.05))) +
+  theme_classic() + 
+  guides(color = "none", alpha = "none")
+
+ggsave("Results/4/5.zoomed_no_log.pdf", plot = last_plot())
+
+
+## 6.zoomed and no log 
+ggplot(merged4) +
+  geom_rect(xmin = 123000, xmax = 147000, ymin = 0, ymax = 30, fill = "lightpink", alpha = 0.5, colour = NA) +
+  geom_rect(xmin = 19000, xmax = 122000, ymin = 0, ymax = 30, fill = "lightblue", alpha = 1, colour = NA) +
+  geom_vline(xintercept = 60000, linetype = "dashed", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 100000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 200000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 300000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 400000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 500000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 600000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 700000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_step(aes(x = time, y = Ne, group = ind, alpha = 0.1)) +
+  #geom_smooth(aes(x = time, y = Ne, color = state), method = "gam", se = FALSE) +  # Add smoothed trendline
+  labs(x = "Years", y = "Effective population size (x10^4)", title = "Title") +
+  scale_x_continuous(limits = c(10000, 500000), expand = expansion(mult = c(0.01, 0.05))) +
+  scale_y_continuous(limits = c(0, 30), expand = expansion(mult = c(0, 0.05))) +
+  theme_classic() + 
+  guides(color = "none", alpha = "none")
+
+ggsave("Results/4/6.zoomed_no_log.pdf", plot = last_plot())
+
+
+
+## 7.wrapped for each population coloured by coverage
+# Create the ggplot
+
+# Plot with text annotations for step plot counts
+
+summary_df <- merged4_cov %>%
+  group_by(state) %>%
+  summarize(step_count = n_distinct(ind))
+
+## Check How many individuals are there in merged4_cov
+merged4_cov %>%
+  summarize(unique_ind_count = n_distinct(ind))
+
+library(ggplot2)
+
+# Create the plot
+ggplot(merged4_cov) +
+  geom_step(aes(x = time, y = Ne, group = ind, color = coverage, order = coverage)) +
+  geom_text(data = summary_df, aes(label = paste("N:",step_count), x = Inf, y = Inf), 
+          hjust = 1.5, vjust = 2, size = 3, color = "black", show.legend = FALSE) +  # Add text annotations
+  facet_wrap(~state) + 
+  labs(x = "Years", y = "Effective population size (x10^4)", title = "Title") +
+  scale_x_log10(limits = c(10000, 5000000)) +
+  scale_y_continuous(limits = c(0, 30), expand = expansion(mult = c(0, 0.05))) +
+  theme_classic() + 
+  guides(alpha = "none") +
+  theme(legend.background = element_rect(fill = "transparent"), 
+  legend.box.background = element_rect(fill = "transparent"), 
+  panel.background = element_rect(fill = "transparent"), 
+  panel.grid.major = element_blank(), 
+  panel.grid.minor = element_blank(), 
+  plot.background = element_rect(fill = "transparent", color = NA)) +
+  scale_color_gradient2(name = "Coverage", low = "red", mid = "grey", high = "green", midpoint = 30)
+
+
+
+ggsave("Results/4/7.each_pop_coverage.pdf", plot = last_plot(), bg = "transparent")
+```
+
+```{r}
+
+## Original analysis of default PSMC parameters
+# Create the ggplot
+
+
+
+## 1.All time log
+ggplot(merged22) +
+  geom_rect(xmin = log10(123000), xmax = log10(147000), ymin = 0, ymax = 30, fill = "lightpink", alpha = 0.5, colour = NA) +
+  geom_rect(xmin = log10(19000), xmax = log10(122000), ymin = 0, ymax = 30, fill = "lightblue", alpha = 0.5, colour = NA) +
+  geom_vline(xintercept = 60000, linetype = "dashed", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 100000, linetype = "solid", color = "black", alpha = 0.4) +  # Add vertical line
+  geom_vline(xintercept = 200000, linetype = "solid", color = "black", alpha = 0.4) +  # Add vertical line
+  geom_vline(xintercept = 500000, linetype = "solid", color = "black", alpha = 0.4) +  # Add vertical line
+  #geom_step(aes(x = time, y = Ne, group = ind, alpha = 0.001, color = state)) +
+  geom_smooth(aes(x = time, y = Ne, color = state), method = "gam", se = FALSE, linetype = "dashed") +  # Add smoothed trendline
+  geom_smooth(aes(x = time, y = Ne), method = "gam", se = FALSE, color = "red") +  # Add smoothed trendline
+  #facet_wrap(~state) + 
+  labs(x = "Years", y = "Effective population size (x10^4)", title = "Title") +
+  scale_x_log10(limits = c(10000, 5000000)) +
+  #scale_x_continuous(limits = c(10000, 1500000), expand = expansion(mult = c(0.2, 0.05))) +
+  scale_y_continuous(limits = c(0, 30), expand = expansion(mult = c(0, 0.05))) +
+  theme_classic() #+ 
+  #guides(color = "none")
+
+ggsave("Results/22/1.All_time_log.pdf", plot = last_plot())
+
+
+## 2.Zoomed in and no log
+ggplot(merged22) +
+  geom_rect(xmin = 123000, xmax = 147000, ymin = 0, ymax = 30, fill = "lightpink", alpha = 0.5, colour = NA) +
+  geom_rect(xmin = 19000, xmax = 122000, ymin = 0, ymax = 30, fill = "lightblue", alpha = 0.5, colour = NA) +
+  geom_vline(xintercept = 60000, linetype = "dashed", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 100000, linetype = "solid", color = "black", alpha = 0.4) +  # Add vertical line
+  geom_vline(xintercept = 200000, linetype = "solid", color = "black", alpha = 0.4) +  # Add vertical line
+  geom_vline(xintercept = 500000, linetype = "solid", color = "black", alpha = 0.4) +  # Add vertical line
+  #geom_step(aes(x = time, y = Ne, group = ind, alpha = 0.001, color = state)) +
+  geom_smooth(aes(x = time, y = Ne, color = state), method = "gam", se = FALSE, linetype = "dashed") +  # Add smoothed trendline
+  geom_smooth(aes(x = time, y = Ne), method = "gam", se = FALSE, color = "red") +  # Add smoothed trendline
+  #facet_wrap(~state) + 
+  labs(x = "Years", y = "Effective population size (x10^4)", title = "Title") +
+  #scale_x_log10(limits = c(10000, 1000000)) +
+  scale_x_continuous(limits = c(10000, 500000), expand = expansion(mult = c(0.05, 0.05))) +
+  scale_y_continuous(limits = c(0, 30), expand = expansion(mult = c(0, 0.05))) +
+  theme_classic() #+ 
+  #guides(color = "none")
+
+ggsave("Results/22/2.zoome_nolog.pdf", plot = last_plot())
+
+
+## 3.wrapped for each population
+# Create the ggplot
+ggplot(merged22) +
+  geom_rect(xmin = log10(123000), xmax = log10(147000), ymin = 0, ymax = 30, fill = "lightpink", alpha = 0.5, colour = NA) +
+  geom_rect(xmin = log10(19000), xmax = log10(122000), ymin = 0, ymax = 30, fill = "lightblue", alpha = 0.5, colour = NA) +
+  geom_vline(xintercept = 60000, linetype = "dashed", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 100000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 200000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 300000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 400000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 500000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 600000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 700000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_step(aes(x = time, y = Ne, group = ind, alpha = 0.001)) +
+  geom_smooth(aes(x = time, y = Ne, color = state), method = "gam", se = FALSE) +  # Add smoothed trendline
+  facet_wrap(~state) + 
+  labs(x = "Years", y = "Effective population size (x10^4)", title = "Title") +
+  scale_x_log10(limits = c(10000, 5000000)) +
+  scale_y_continuous(limits = c(0, 30), expand = expansion(mult = c(0, 0.05))) +
+  theme_classic() + 
+  guides(color = "none", alpha = "none")
+
+ggsave("Results/22/3.each_pop1.pdf", plot = last_plot())
+
+
+## 4.wrapped for each population, no geom_smooth
+# Create the ggplot
+ggplot(merged22) +
+  geom_rect(xmin = log10(123000), xmax = log10(147000), ymin = 0, ymax = 30, fill = "lightpink", alpha = 0.5, colour = NA) +
+  geom_rect(xmin = log10(19000), xmax = log10(122000), ymin = 0, ymax = 30, fill = "lightblue", alpha = 0.5, colour = NA) +
+  geom_vline(xintercept = 60000, linetype = "dashed", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 100000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 200000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 500000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 1000000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_step(aes(x = time, y = Ne, group = ind, alpha = 0.001, colour = state)) +
+  facet_wrap(~state) + 
+  labs(x = "Years", y = "Effective population size (x10^4)", title = "Title") +
+  scale_x_log10(limits = c(10000, 5000000)) +
+  scale_y_continuous(limits = c(0, 30), expand = expansion(mult = c(0, 0.05))) +
+  theme_classic() + 
+  guides(color = "none", alpha = "none")
+
+ggsave("Results/22/4.each_pop_nogam.pdf", plot = last_plot())
+
+
+## 5.zoomed and no log 
+ggplot(merged22) +
+  geom_rect(xmin = 123000, xmax = 147000, ymin = 0, ymax = 30, fill = "lightpink", alpha = 0.5, colour = NA) +
+  geom_rect(xmin = 19000, xmax = 122000, ymin = 0, ymax = 30, fill = "lightblue", alpha = 0.5, colour = NA) +
+  geom_vline(xintercept = 60000, linetype = "dashed", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 100000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 200000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 300000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 400000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 500000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 600000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 700000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_step(aes(x = time, y = Ne, group = ind, alpha = 0.001)) +
+  geom_smooth(aes(x = time, y = Ne, color = state), method = "gam", se = FALSE) +  # Add smoothed trendline
+  facet_wrap(~state) + 
+  labs(x = "Years", y = "Effective population size (x10^4)", title = "Title") +
+  scale_x_continuous(limits = c(10000, 500000), expand = expansion(mult = c(0.05, 0.05))) +
+  scale_y_continuous(limits = c(0, 30), expand = expansion(mult = c(0, 0.05))) +
+  theme_classic() + 
+  guides(color = "none", alpha = "none")
+
+ggsave("Results/22/5.zoomed_no_log.pdf", plot = last_plot())
+
+
+## 6.zoomed and no log 
+ggplot(merged22) +
+  geom_rect(xmin = 123000, xmax = 147000, ymin = 0, ymax = 30, fill = "lightpink", alpha = 0.5, colour = NA) +
+  geom_rect(xmin = 19000, xmax = 122000, ymin = 0, ymax = 30, fill = "lightblue", alpha = 1, colour = NA) +
+  geom_vline(xintercept = 60000, linetype = "dashed", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 100000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 200000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 300000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 400000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 500000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 600000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 700000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_step(aes(x = time, y = Ne, group = ind, alpha = 0.1)) +
+  #geom_smooth(aes(x = time, y = Ne, color = state), method = "gam", se = FALSE) +  # Add smoothed trendline
+  labs(x = "Years", y = "Effective population size (x10^4)", title = "Title") +
+  scale_x_continuous(limits = c(10000, 500000), expand = expansion(mult = c(0.01, 0.05))) +
+  scale_y_continuous(limits = c(0, 30), expand = expansion(mult = c(0, 0.05))) +
+  theme_classic() + 
+  guides(color = "none", alpha = "none")
+
+ggsave("Results/22/6.zoomed_no_log.pdf", plot = last_plot())
+
+
+
+## 7.wrapped for each population coloured by coverage
+# Create the ggplot
+
+# Plot with text annotations for step plot counts
+
+summary_df <- merged22_cov %>%
+  group_by(state) %>%
+  summarize(step_count = n_distinct(ind))
+
+## Check How many individuals are there in merged22_cov
+merged22_cov %>%
+  summarize(unique_ind_count = n_distinct(ind))
+
+library(ggplot2)
+
+# Create the plot
+ggplot(merged22_cov) +
+  geom_step(aes(x = time, y = Ne, group = ind, color = coverage, order = coverage)) +
+  geom_text(data = summary_df, aes(label = paste("N:",step_count), x = Inf, y = Inf), 
+          hjust = 1.5, vjust = 2, size = 3, color = "black", show.legend = FALSE) +  # Add text annotations
+  facet_wrap(~state) + 
+  labs(x = "Years", y = "Effective population size (x10^4)", title = "Title") +
+  scale_x_log10(limits = c(10000, 5000000)) +
+  scale_y_continuous(limits = c(0, 30), expand = expansion(mult = c(0, 0.05))) +
+  theme_classic() + 
+  guides(alpha = "none") +
+  theme(legend.background = element_rect(fill = "transparent"), 
+  legend.box.background = element_rect(fill = "transparent"), 
+  panel.background = element_rect(fill = "transparent"), 
+  panel.grid.major = element_blank(), 
+  panel.grid.minor = element_blank(), 
+  plot.background = element_rect(fill = "transparent", color = NA)) +
+  scale_color_gradient2(name = "Coverage", low = "red", mid = "grey", high = "green", midpoint = 30)
+
+
+
+ggsave("Results/22/7.each_pop_coverage.pdf", plot = last_plot(), bg = "transparent")
+```
+
+```{r}
+
+## Original analysis of default PSMC parameters
+# Create the ggplot
+
+
+
+## 1.All time log
+ggplot(merged1111) +
+  geom_rect(xmin = log10(123000), xmax = log10(147000), ymin = 0, ymax = 30, fill = "lightpink", alpha = 0.5, colour = NA) +
+  geom_rect(xmin = log10(19000), xmax = log10(122000), ymin = 0, ymax = 30, fill = "lightblue", alpha = 0.5, colour = NA) +
+  geom_vline(xintercept = 60000, linetype = "dashed", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 100000, linetype = "solid", color = "black", alpha = 0.4) +  # Add vertical line
+  geom_vline(xintercept = 200000, linetype = "solid", color = "black", alpha = 0.4) +  # Add vertical line
+  geom_vline(xintercept = 500000, linetype = "solid", color = "black", alpha = 0.4) +  # Add vertical line
+  #geom_step(aes(x = time, y = Ne, group = ind, alpha = 0.001, color = state)) +
+  geom_smooth(aes(x = time, y = Ne, color = state), method = "gam", se = FALSE, linetype = "dashed") +  # Add smoothed trendline
+  geom_smooth(aes(x = time, y = Ne), method = "gam", se = FALSE, color = "red") +  # Add smoothed trendline
+  #facet_wrap(~state) + 
+  labs(x = "Years", y = "Effective population size (x10^4)", title = "Title") +
+  scale_x_log10(limits = c(10000, 5000000)) +
+  #scale_x_continuous(limits = c(10000, 1500000), expand = expansion(mult = c(0.2, 0.05))) +
+  scale_y_continuous(limits = c(0, 30), expand = expansion(mult = c(0, 0.05))) +
+  theme_classic() #+ 
+  #guides(color = "none")
+
+ggsave("Results/1111/1.All_time_log.pdf", plot = last_plot())
+
+
+## 2.Zoomed in and no log
+ggplot(merged1111) +
+  geom_rect(xmin = 123000, xmax = 147000, ymin = 0, ymax = 30, fill = "lightpink", alpha = 0.5, colour = NA) +
+  geom_rect(xmin = 19000, xmax = 122000, ymin = 0, ymax = 30, fill = "lightblue", alpha = 0.5, colour = NA) +
+  geom_vline(xintercept = 60000, linetype = "dashed", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 100000, linetype = "solid", color = "black", alpha = 0.4) +  # Add vertical line
+  geom_vline(xintercept = 200000, linetype = "solid", color = "black", alpha = 0.4) +  # Add vertical line
+  geom_vline(xintercept = 500000, linetype = "solid", color = "black", alpha = 0.4) +  # Add vertical line
+  #geom_step(aes(x = time, y = Ne, group = ind, alpha = 0.001, color = state)) +
+  geom_smooth(aes(x = time, y = Ne, color = state), method = "gam", se = FALSE, linetype = "dashed") +  # Add smoothed trendline
+  geom_smooth(aes(x = time, y = Ne), method = "gam", se = FALSE, color = "red") +  # Add smoothed trendline
+  #facet_wrap(~state) + 
+  labs(x = "Years", y = "Effective population size (x10^4)", title = "Title") +
+  #scale_x_log10(limits = c(10000, 1000000)) +
+  scale_x_continuous(limits = c(10000, 500000), expand = expansion(mult = c(0.05, 0.05))) +
+  scale_y_continuous(limits = c(0, 30), expand = expansion(mult = c(0, 0.05))) +
+  theme_classic() #+ 
+  #guides(color = "none")
+
+ggsave("Results/1111/2.zoome_nolog.pdf", plot = last_plot())
+
+
+## 3.wrapped for each population
+# Create the ggplot
+ggplot(merged1111) +
+  geom_rect(xmin = log10(123000), xmax = log10(147000), ymin = 0, ymax = 30, fill = "lightpink", alpha = 0.5, colour = NA) +
+  geom_rect(xmin = log10(19000), xmax = log10(122000), ymin = 0, ymax = 30, fill = "lightblue", alpha = 0.5, colour = NA) +
+  geom_vline(xintercept = 60000, linetype = "dashed", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 100000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 200000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 300000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 400000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 500000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 600000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 700000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_step(aes(x = time, y = Ne, group = ind, alpha = 0.001)) +
+  geom_smooth(aes(x = time, y = Ne, color = state), method = "gam", se = FALSE) +  # Add smoothed trendline
+  facet_wrap(~state) + 
+  labs(x = "Years", y = "Effective population size (x10^4)", title = "Title") +
+  scale_x_log10(limits = c(10000, 5000000)) +
+  scale_y_continuous(limits = c(0, 30), expand = expansion(mult = c(0, 0.05))) +
+  theme_classic() + 
+  guides(color = "none", alpha = "none")
+
+ggsave("Results/1111/3.each_pop1.pdf", plot = last_plot())
+
+
+## 4.wrapped for each population, no geom_smooth
+# Create the ggplot
+ggplot(merged1111) +
+  geom_rect(xmin = log10(123000), xmax = log10(147000), ymin = 0, ymax = 30, fill = "lightpink", alpha = 0.5, colour = NA) +
+  geom_rect(xmin = log10(19000), xmax = log10(122000), ymin = 0, ymax = 30, fill = "lightblue", alpha = 0.5, colour = NA) +
+  geom_vline(xintercept = 60000, linetype = "dashed", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 100000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 200000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 500000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 1000000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_step(aes(x = time, y = Ne, group = ind, alpha = 0.001, colour = state)) +
+  facet_wrap(~state) + 
+  labs(x = "Years", y = "Effective population size (x10^4)", title = "Title") +
+  scale_x_log10(limits = c(10000, 5000000)) +
+  scale_y_continuous(limits = c(0, 30), expand = expansion(mult = c(0, 0.05))) +
+  theme_classic() + 
+  guides(color = "none", alpha = "none")
+
+ggsave("Results/1111/4.each_pop_nogam.pdf", plot = last_plot())
+
+
+## 5.zoomed and no log 
+ggplot(merged1111) +
+  geom_rect(xmin = 123000, xmax = 147000, ymin = 0, ymax = 30, fill = "lightpink", alpha = 0.5, colour = NA) +
+  geom_rect(xmin = 19000, xmax = 122000, ymin = 0, ymax = 30, fill = "lightblue", alpha = 0.5, colour = NA) +
+  geom_vline(xintercept = 60000, linetype = "dashed", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 100000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 200000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 300000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 400000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 500000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 600000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 700000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_step(aes(x = time, y = Ne, group = ind, alpha = 0.001)) +
+  geom_smooth(aes(x = time, y = Ne, color = state), method = "gam", se = FALSE) +  # Add smoothed trendline
+  facet_wrap(~state) + 
+  labs(x = "Years", y = "Effective population size (x10^4)", title = "Title") +
+  scale_x_continuous(limits = c(10000, 500000), expand = expansion(mult = c(0.05, 0.05))) +
+  scale_y_continuous(limits = c(0, 30), expand = expansion(mult = c(0, 0.05))) +
+  theme_classic() + 
+  guides(color = "none", alpha = "none")
+
+ggsave("Results/1111/5.zoomed_no_log.pdf", plot = last_plot())
+
+
+## 6.zoomed and no log 
+ggplot(merged1111) +
+  geom_rect(xmin = 123000, xmax = 147000, ymin = 0, ymax = 30, fill = "lightpink", alpha = 0.5, colour = NA) +
+  geom_rect(xmin = 19000, xmax = 122000, ymin = 0, ymax = 30, fill = "lightblue", alpha = 1, colour = NA) +
+  geom_vline(xintercept = 60000, linetype = "dashed", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 100000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 200000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 300000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 400000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 500000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 600000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 700000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_step(aes(x = time, y = Ne, group = ind, alpha = 0.1)) +
+  #geom_smooth(aes(x = time, y = Ne, color = state), method = "gam", se = FALSE) +  # Add smoothed trendline
+  labs(x = "Years", y = "Effective population size (x10^4)", title = "Title") +
+  scale_x_continuous(limits = c(10000, 500000), expand = expansion(mult = c(0.01, 0.05))) +
+  scale_y_continuous(limits = c(0, 30), expand = expansion(mult = c(0, 0.05))) +
+  theme_classic() + 
+  guides(color = "none", alpha = "none")
+
+ggsave("Results/1111/6.zoomed_no_log.pdf", plot = last_plot())
+
+
+
+## 7.wrapped for each population coloured by coverage
+# Create the ggplot
+
+# Plot with text annotations for step plot counts
+
+summary_df <- merged1111_cov %>%
+  group_by(state) %>%
+  summarize(step_count = n_distinct(ind))
+
+## Check How many individuals are there in merged1111_cov
+merged1111_cov %>%
+  summarize(unique_ind_count = n_distinct(ind))
+
+library(ggplot2)
+
+# Create the plot
+ggplot(merged1111_cov) +
+  geom_step(aes(x = time, y = Ne, group = ind, color = coverage, order = coverage)) +
+  geom_text(data = summary_df, aes(label = paste("N:",step_count), x = Inf, y = Inf), 
+          hjust = 1.5, vjust = 2, size = 3, color = "black", show.legend = FALSE) +  # Add text annotations
+  facet_wrap(~state) + 
+  labs(x = "Years", y = "Effective population size (x10^4)", title = "Title") +
+  scale_x_log10(limits = c(10000, 5000000)) +
+  scale_y_continuous(limits = c(0, 30), expand = expansion(mult = c(0, 0.05))) +
+  theme_classic() + 
+  guides(alpha = "none") +
+  theme(legend.background = element_rect(fill = "transparent"), 
+  legend.box.background = element_rect(fill = "transparent"), 
+  panel.background = element_rect(fill = "transparent"), 
+  panel.grid.major = element_blank(), 
+  panel.grid.minor = element_blank(), 
+  plot.background = element_rect(fill = "transparent", color = NA)) +
+  scale_color_gradient2(name = "Coverage", low = "red", mid = "grey", high = "green", midpoint = 30)
+
+
+
+ggsave("Results/1111/7.each_pop_coverage.pdf", plot = last_plot(), bg = "transparent")
+```
+
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(purrr)
+library(patchwork)
+
+# Merge data without modifying originals
+merged_all <- bind_rows(
+  merged4 %>% mutate(source = "4"),
+  merged22 %>% mutate(source = "22"),
+  merged1111 %>% mutate(source = "1111")
+)
+
+# Get a list of unique individuals
+ind_list <- unique(merged_all$ind)
+
+# Function to generate the plot
+generate_plot <- function(df_subset, x_limit) {
+  ggplot(df_subset) +
+    geom_step(aes(x = time, y = Ne, color = source, group = source, linetype = source), alpha = 0.7, linewidth = 1.5) +
+    scale_linetype_manual(values = c("4" = "solid", "22" = "dashed", "1111" = "dashed")) +
+    labs(x = "Years", y = "Ne (x10^4)", title = paste("Ind:", df_subset$ind[1])) +
+    scale_x_log10(limits = x_limit) +
+    scale_y_continuous(limits = c(0, 30), expand = expansion(mult = c(0, 0.05))) +
+    theme_classic()
+}
+
+# Generate plots for each individual (with two x-ranges)
+plot_list_1 <- map(ind_list, function(individual) {
+  df_subset <- merged_all %>% filter(ind == individual)  # Subset data
+  generate_plot(df_subset, c(10000, 100000))  # First x-range
+})
+
+plot_list_2 <- map(ind_list, function(individual) {
+  df_subset <- merged_all %>% filter(ind == individual)  # Subset data
+  generate_plot(df_subset, c(10000, 5000000))  # Second x-range
+})
+
+# Function to save plots as a multi-page PDF
+save_plots_as_pdf <- function(plot_list, file_name) {
+  # Number of plots per page (e.g., 3 columns × 4 rows = 12 per page)
+  plots_per_page <- 12
+  total_pages <- ceiling(length(plot_list) / plots_per_page)
+
+  pdf(file_name, width = 12, height = 8)
+  for (i in seq_len(total_pages)) {
+    start_idx <- (i - 1) * plots_per_page + 1
+    end_idx <- min(i * plots_per_page, length(plot_list))
+    panel_plot <- wrap_plots(plot_list[start_idx:end_idx]) + plot_layout(ncol = 3)
+    print(panel_plot)
+  }
+  dev.off()
+}
+
+# Save the plots for both x-ranges as separate PDFs
+save_plots_as_pdf(plot_list_1, "individual_plots_panel_x100000.pdf")
+save_plots_as_pdf(plot_list_2, "individual_plots_panel_x5000000.pdf")
+
+```
+
+```{r}
+
+### Now that we've looked at the different plots when using 4, 2+2, and 1+1+1+1 in PSMC and selected the best one for each sample (best_source.csv) we can graph all the samples with the best option for each.
+library(ggplot2)
+library(dplyr)
+library(readr)
+
+# Load the best_sources.csv file
+best_source <- read_csv("best_source.csv", col_types = cols(source = col_character()))
+
+# Remove individuals listed in best_sources.csv from source4_samples
+source4_best <- merged4 %>% filter(!ind %in% best_source$ind)
+
+# Extract the specified individuals from their correct sources
+source2_1111_best <- merged_all %>% 
+  inner_join(best_source, by = c("ind", "source"))  # Only keep rows matching best_source
+
+# Combine the filtered source 4 samples with the replacement samples
+merged_best_source <- bind_rows(source4_best, source2_1111_best)
+
+
+# Graph using the best source dataframe
+
+## 1.All time log
+ggplot(merged_best_source) +
+  geom_rect(xmin = log10(123000), xmax = log10(147000), ymin = 0, ymax = 30, fill = "lightpink", alpha = 0.5, colour = NA) +
+  geom_rect(xmin = log10(19000), xmax = log10(122000), ymin = 0, ymax = 30, fill = "lightblue", alpha = 0.5, colour = NA) +
+  geom_vline(xintercept = 60000, linetype = "dashed", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 100000, linetype = "solid", color = "black", alpha = 0.4) +  # Add vertical line
+  geom_vline(xintercept = 200000, linetype = "solid", color = "black", alpha = 0.4) +  # Add vertical line
+  geom_vline(xintercept = 500000, linetype = "solid", color = "black", alpha = 0.4) +  # Add vertical line
+  #geom_step(aes(x = time, y = Ne, group = ind, alpha = 0.001, color = state)) +
+  geom_smooth(aes(x = time, y = Ne, color = state), method = "gam", se = FALSE, linetype = "dashed") +  # Add smoothed trendline
+  geom_smooth(aes(x = time, y = Ne), method = "gam", se = FALSE, color = "red") +  # Add smoothed trendline
+  #facet_wrap(~state) + 
+  labs(x = "Years", y = "Effective population size (x10^4)", title = "Title") +
+  scale_x_log10(limits = c(10000, 5000000)) +
+  #scale_x_continuous(limits = c(10000, 1500000), expand = expansion(mult = c(0.2, 0.05))) +
+  scale_y_continuous(limits = c(0, 30), expand = expansion(mult = c(0, 0.05))) +
+  theme_classic() #+ 
+  #guides(color = "none")
+
+ggsave("Results/best_source/1.All_time_log.pdf", plot = last_plot())
+ggsave("Results/best_source/1.All_time_log.png", plot = last_plot(), device = "png")
+
+
+## 2.Zoomed in and no log
+ggplot(merged_best_source) +
+  geom_rect(xmin = 123000, xmax = 147000, ymin = 0, ymax = 30, fill = "lightpink", alpha = 0.5, colour = NA) +
+  geom_rect(xmin = 19000, xmax = 122000, ymin = 0, ymax = 30, fill = "lightblue", alpha = 0.5, colour = NA) +
+  geom_vline(xintercept = 60000, linetype = "dashed", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 100000, linetype = "solid", color = "black", alpha = 0.4) +  # Add vertical line
+  geom_vline(xintercept = 200000, linetype = "solid", color = "black", alpha = 0.4) +  # Add vertical line
+  geom_vline(xintercept = 500000, linetype = "solid", color = "black", alpha = 0.4) +  # Add vertical line
+  #geom_step(aes(x = time, y = Ne, group = ind, alpha = 0.001, color = state)) +
+  geom_smooth(aes(x = time, y = Ne, color = state), method = "gam", se = FALSE, linetype = "dashed") +  # Add smoothed trendline
+  geom_smooth(aes(x = time, y = Ne), method = "gam", se = FALSE, color = "red") +  # Add smoothed trendline
+  #facet_wrap(~state) + 
+  labs(x = "Years", y = "Effective population size (x10^4)", title = "Title") +
+  #scale_x_log10(limits = c(10000, 1000000)) +
+  scale_x_continuous(limits = c(10000, 500000), expand = expansion(mult = c(0.05, 0.05))) +
+  scale_y_continuous(limits = c(0, 30), expand = expansion(mult = c(0, 0.05))) +
+  theme_classic() #+ 
+  #guides(color = "none")
+
+ggsave("Results/best_source/2.zoome_nolog.pdf", plot = last_plot())
+ggsave("Results/best_source/2.zoome_nolog.png", plot = last_plot(), device = "png")
+
+
+## 3.wrapped for each population
+# Create the ggplot
+ggplot(merged_best_source) +
+  geom_rect(xmin = log10(123000), xmax = log10(147000), ymin = 0, ymax = 30, fill = "lightpink", alpha = 0.5, colour = NA) +
+  geom_rect(xmin = log10(19000), xmax = log10(122000), ymin = 0, ymax = 30, fill = "lightblue", alpha = 0.5, colour = NA) +
+  geom_vline(xintercept = 60000, linetype = "dashed", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 100000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 200000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 300000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 400000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 500000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 600000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 700000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_step(aes(x = time, y = Ne, group = ind, alpha = 0.001)) +
+  geom_smooth(aes(x = time, y = Ne, color = state), method = "gam", se = FALSE) +  # Add smoothed trendline
+  facet_wrap(~state) + 
+  labs(x = "Years", y = "Effective population size (x10^4)", title = "Title") +
+  scale_x_log10(limits = c(10000, 5000000)) +
+  scale_y_continuous(limits = c(0, 30), expand = expansion(mult = c(0, 0.05))) +
+  theme_classic() + 
+  guides(color = "none", alpha = "none")
+
+ggsave("Results/best_source/3.each_pop1.pdf", plot = last_plot())
+ggsave("Results/best_source/3.each_pop1.png", plot = last_plot(), device = "png")
+
+
+## 4.wrapped for each population, no geom_smooth
+# Create the ggplot
+ggplot(merged_best_source) +
+  geom_rect(xmin = log10(123000), xmax = log10(147000), ymin = 0, ymax = 30, fill = "lightpink", alpha = 0.5, colour = NA) +
+  geom_rect(xmin = log10(19000), xmax = log10(122000), ymin = 0, ymax = 30, fill = "lightblue", alpha = 0.5, colour = NA) +
+  geom_vline(xintercept = 60000, linetype = "dashed", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 100000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 200000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 500000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 1000000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_step(aes(x = time, y = Ne, group = ind, alpha = 0.001, colour = state)) +
+  facet_wrap(~state) + 
+  labs(x = "Years", y = "Effective population size (x10^4)", title = "Title") +
+  scale_x_log10(limits = c(10000, 5000000)) +
+  scale_y_continuous(limits = c(0, 30), expand = expansion(mult = c(0, 0.05))) +
+  theme_classic() + 
+  guides(color = "none", alpha = "none")
+
+ggsave("Results/best_source/4.each_pop_nogam.pdf", plot = last_plot())
+ggsave("Results/best_source/4.each_pop_nogam.png", plot = last_plot(), device = "png")
+
+
+## 5.zoomed and no log 
+ggplot(merged_best_source) +
+  geom_rect(xmin = 123000, xmax = 147000, ymin = 0, ymax = 30, fill = "lightpink", alpha = 0.5, colour = NA) +
+  geom_rect(xmin = 19000, xmax = 122000, ymin = 0, ymax = 30, fill = "lightblue", alpha = 0.5, colour = NA) +
+  geom_vline(xintercept = 60000, linetype = "dashed", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 100000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 200000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 300000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 400000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 500000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 600000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 700000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_step(aes(x = time, y = Ne, group = ind, alpha = 0.001)) +
+  geom_smooth(aes(x = time, y = Ne, color = state), method = "gam", se = FALSE) +  # Add smoothed trendline
+  facet_wrap(~state) + 
+  labs(x = "Years", y = "Effective population size (x10^4)", title = "Title") +
+  scale_x_continuous(limits = c(10000, 500000), expand = expansion(mult = c(0.05, 0.05))) +
+  scale_y_continuous(limits = c(0, 30), expand = expansion(mult = c(0, 0.05))) +
+  theme_classic() + 
+  guides(color = "none", alpha = "none")
+
+ggsave("Results/best_source/5.zoomed_no_log.pdf", plot = last_plot())
+ggsave("Results/best_source/5.zoomed_no_log.png", plot = last_plot(), device = "png")
+
+
+## 6.zoomed and no log 
+ggplot(merged_best_source) +
+  geom_rect(xmin = 123000, xmax = 147000, ymin = 0, ymax = 30, fill = "lightpink", alpha = 0.5, colour = NA) +
+  geom_rect(xmin = 19000, xmax = 122000, ymin = 0, ymax = 30, fill = "lightblue", alpha = 1, colour = NA) +
+  geom_vline(xintercept = 60000, linetype = "dashed", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 100000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 200000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 300000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 400000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 500000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 600000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_vline(xintercept = 700000, linetype = "solid", color = "black") +  # Add vertical line
+  geom_step(aes(x = time, y = Ne, group = ind, alpha = 0.1)) +
+  #geom_smooth(aes(x = time, y = Ne, color = state), method = "gam", se = FALSE) +  # Add smoothed trendline
+  labs(x = "Years", y = "Effective population size (x10^4)", title = "Title") +
+  scale_x_continuous(limits = c(10000, 500000), expand = expansion(mult = c(0.01, 0.05))) +
+  scale_y_continuous(limits = c(0, 30), expand = expansion(mult = c(0, 0.05))) +
+  theme_classic() + 
+  guides(color = "none", alpha = "none")
+
+ggsave("Results/best_source/6.zoomed_no_log.pdf", plot = last_plot())
+ggsave("Results/best_source/6.zoomed_no_log.png", plot = last_plot(), device = "png")
+
+
+
+## 7.wrapped for each population coloured by coverage
+# Create the ggplot
+
+# Plot with text annotations for step plot counts
+
+merged_best_source_cov <- merge(merged_best_source, coverage, by = "ind", all.x = TRUE)
+
+summary_df <- merged_best_source_cov %>%
+  group_by(state) %>%
+  summarize(step_count = n_distinct(ind))
+
+## Check How many individuals are there in merged_best_source_cov
+merged_best_source_cov %>%
+  summarize(unique_ind_count = n_distinct(ind))
+
+library(ggplot2)
+
+# Create the plot
+ggplot(merged_best_source_cov) +
+  geom_step(aes(x = time, y = Ne, group = ind, color = coverage, order = coverage)) +
+  geom_text(data = summary_df, aes(label = paste("N:",step_count), x = Inf, y = Inf), 
+          hjust = 1.5, vjust = 2, size = 3, color = "black", show.legend = FALSE) +  # Add text annotations
+  facet_wrap(~state) + 
+  labs(x = "Years", y = "Effective population size (x10^4)", title = "Title") +
+  scale_x_log10(limits = c(10000, 5000000)) +
+  scale_y_continuous(limits = c(0, 30), expand = expansion(mult = c(0, 0.05))) +
+  theme_classic() + 
+  guides(alpha = "none") +
+  theme(legend.background = element_rect(fill = "transparent"), 
+  legend.box.background = element_rect(fill = "transparent"), 
+  panel.background = element_rect(fill = "transparent"), 
+  panel.grid.major = element_blank(), 
+  panel.grid.minor = element_blank(), 
+  plot.background = element_rect(fill = "transparent", color = NA)) +
+  scale_color_gradient2(name = "Coverage", low = "red", mid = "grey", high = "green", midpoint = 30)
+
+
+
+ggsave("Results/best_source/7.each_pop_coverage.pdf", plot = last_plot(), bg = "transparent")
+ggsave("Results/best_source/7.each_pop_coverage.png", plot = last_plot(), bg = "transparent", device = "png")
+
+```
+
+```{r}
+#### clean up the plots for the figures
+
+### Now that we've looked at the different plots when using 4, 2+2, and 1+1+1+1 in PSMC and selected the best one for each sample (best_source.csv) we can graph all the samples with the best option for each.
+library(ggplot2)
+library(dplyr)
+library(readr)
+
+# Load the best_sources.csv file
+best_source <- read_csv("best_source.csv", col_types = cols(source = col_character()))
+
+# Remove individuals listed in best_sources.csv from source4_samples
+source4_best <- merged4 %>% filter(!ind %in% best_source$ind)
+
+# Extract the specified individuals from their correct sources
+source2_1111_best <- merged_all %>% 
+  inner_join(best_source, by = c("ind", "source"))  # Only keep rows matching best_source
+
+# Combine the filtered source 4 samples with the replacement samples
+merged_best_source <- bind_rows(source4_best, source2_1111_best)
+
+merged_best_source_5pops <- merged_best_source %>%
+  mutate(state = ifelse(state == "SA", "VIC", state)) %>%  # Change SA to VIC
+  filter(state != "Narrandera") %>%  # Remove rows with Narrandera in state column
+  mutate(state = case_when(  # Update specific individuals
+    ind == "Dubbo_M_C11512" ~ "M_NSW",
+    ind == "Dubbo_M_C11413" ~ "S_NSW",
+    ind == "Dubbo_M_C11358" ~ "S_NSW",
+    ind == "Dubbo_M_C11212" ~ "S_NSW",
+    ind == "Dubbo_M_C11085" ~ "M_NSW",
+    TRUE ~ state  # Keep other values unchanged
+  )) %>%
+  filter(!ind %in% c("Campbelltown_M_Marble", "Richmond_Valley_F_M49226"))  # Remove specific individuals
+
+
+# Graph using the best source dataframe
+library(wesanderson)
+library(RColorBrewer)
+
+
+# Extract the first two colors from the Moonrise3 palette
+colors3 <- wes_palette("Moonrise3", 2, type = "discrete")
+# Select a grey color from the "Greys" palette (e.g., the 6th shade from 9 levels)
+grey_color <- brewer.pal(9, "Greys")[6]
+
+# Convert the 'state' column to a factor with the specified order
+merged_best_source_5pops$state <- factor(merged_best_source_5pops$state, levels = c("N_QLD", "SEQLD_FNNSW", "M_NSW", "S_NSW", "VIC"))
+
+
+library(ggplot2)
+library(grid)
+
+
+#With facet headings
+ggplot(merged_best_source_5pops) +
+  geom_rect(xmin = log10(300000), xmax = log10(340000), ymin = 0, ymax = 32, fill = colors3[2], alpha = 1, colour = NA) +  
+  geom_rect(xmin = log10(240000), xmax = log10(300000), ymin = 0, ymax = 32, fill = colors3[1], alpha = 0.1, colour = NA) +  
+  geom_rect(xmin = log10(194000), xmax = log10(240000), ymin = 0, ymax = 32, fill = colors3[2], alpha = 0.1, colour = NA) +  
+  geom_rect(xmin = log10(135000), xmax = log10(194000), ymin = 0, ymax = 32, fill = colors3[1], alpha = 1, colour = NA) +  
+  geom_rect(xmin = log10(115000), xmax = log10(135000), ymin = 0, ymax = 32, fill = colors3[2], alpha = 1, colour = NA) +  
+  geom_rect(xmin = log10(19000), xmax = log10(115000), ymin = 0, ymax = 32, fill = colors3[1], alpha = 0.1, colour = NA) +  
+  geom_rect(xmin = log10(0), xmax = log10(19000), ymin = 0, ymax = 32, fill = colors3[2], alpha = 0.1, colour = NA) + 
+  geom_rect(xmin = log10(45000), xmax = log10(65000), ymin = 0, ymax = 32, fill = grey_color, alpha = 0.1, colour = NA) + 
+  geom_step(aes(x = time, y = Ne, group = ind), alpha = 0.5, colour = grey_color, linewidth = 0.6) +  
+  facet_wrap(~state, nrow = 5, labeller = labeller(state = function(x) gsub("_", " ", x))) +  # Replace underscores with spaces
+  labs(x = "Years", y = expression("Effective population size (x10"^"4"~")")) +  
+  scale_x_log10(limits = c(10000, 5000000), labels = scales::comma) +  
+  scale_y_continuous(limits = c(0, 30), expand = expansion(mult = c(0, 0.05))) +
+  theme_classic() +  
+  theme(
+    strip.background = element_blank(),  # Remove the background box around facet labels
+    axis.line.x = element_line(colour = "black"),  # Add x-axis line
+    axis.line.y = element_line(colour = "black"),  # Add y-axis line
+    panel.border = element_rect(colour = "black", fill = NA)  # Add transparent borders to each facet
+  ) +
+  guides(color = "none", alpha = "none")
+
+ggsave("Results/best_source/Fig3.CLEAN_five_pops_nogam_head.pdf", plot = last_plot(), width = 3, height = 6)  
+ggsave("Results/best_source/Fig3.CLEAN_five_pops_nogam_head.png", plot = last_plot(), device = "png", width = 3, height = 6)
+
+
+
+## Without face headings 
+ggplot(merged_best_source_5pops) +
+  annotate("rect", xmin = 300000, xmax = 340000, ymin = 0, ymax = 32, 
+           fill = colors3[2], alpha = 0.7, colour = NA) +  
+  annotate("rect", xmin = 240000, xmax = 300000, ymin = 0, ymax = 32, 
+           fill = colors3[1], alpha = 0.7, colour = NA) +  
+  annotate("rect", xmin = 194000, xmax = 240000, ymin = 0, ymax = 32, 
+           fill = colors3[2], alpha = 0.7, colour = NA) +  
+  annotate("rect", xmin = 135000, xmax = 194000, ymin = 0, ymax = 32, 
+           fill = colors3[1], alpha = 0.7, colour = NA) +  
+  annotate("rect", xmin = 115000, xmax = 135000, ymin = 0, ymax = 32, 
+           fill = colors3[2], alpha = 0.7, colour = NA) +  
+  annotate("rect", xmin = 19000, xmax = 115000, ymin = 0, ymax = 32, 
+           fill = colors3[1], alpha = 0.7, colour = NA) +  
+  annotate("rect", xmin = 0, xmax = 19000, ymin = 0, ymax = 32, 
+           fill = colors3[2], alpha = 0.7, colour = NA) + 
+  annotate("rect", xmin = 45000, xmax = 65000, ymin = 0, ymax = 15, 
+           fill = grey_color, alpha = 0.5, colour = NA) + 
+  geom_vline(xintercept = 350000, linetype = "dashed", color = grey_color) +  
+  geom_step(aes(x = time, y = Ne, group = ind), alpha = 0.5, colour = grey_color, linewidth = 0.6) +  
+  facet_wrap(~state, nrow = 5, labeller = labeller(state = function(x) gsub("_", " ", x))) +  
+  labs(x = "Years", y = expression("Effective population size (x10"^"4"~")")) +  
+  scale_x_log10(limits = c(10000, 5000000), labels = scales::comma) +  
+  scale_y_continuous(limits = c(0, 32), expand = expansion(mult = c(0, 0))) +
+  theme_classic() +  
+  theme(
+    strip.background = element_blank(),  
+    strip.text = element_blank(),  
+    axis.line.x = element_line(colour = "black"),  
+    axis.line.y = element_line(colour = "black"),  
+    panel.border = element_rect(colour = "black", fill = NA)  
+  ) +
+  guides(color = "none", alpha = "none")
+
+
+
+ggsave("Results/best_source/Fig3.CLEAN_five_pops_nogam_nohead_4.pdf", plot = last_plot(), width = 3, height = 6)  
+ggsave("Results/best_source/Fig3.CLEAN_five_pops_nogam_nohead_4.png", plot = last_plot(), device = "png", width = 3, height = 6)
+
+
+
+
+```
+
+```{r}
+merged_best_source_5pops_cov <- merge(merged_best_source_5pops, coverage, by = "ind", all.x = TRUE)
+
+summary_df <- merged_best_source_5pops_cov %>%
+  group_by(state) %>%
+  summarize(step_count = n_distinct(ind))
+
+## Check How many individuals are there in merged_best_source_cov
+merged_best_source_5pops_cov %>%
+  summarize(unique_ind_count = n_distinct(ind))
+
+#With facet headings
+ggplot(merged_best_source_5pops_cov) +
+  geom_rect(xmin = log10(300000), xmax = log10(340000), ymin = 0, ymax = 32, fill = colors3[2], alpha = 1, colour = NA) +  
+  geom_rect(xmin = log10(240000), xmax = log10(300000), ymin = 0, ymax = 32, fill = colors3[1], alpha = 0.1, colour = NA) +  
+  geom_rect(xmin = log10(194000), xmax = log10(240000), ymin = 0, ymax = 32, fill = colors3[2], alpha = 0.1, colour = NA) +  
+  geom_rect(xmin = log10(135000), xmax = log10(194000), ymin = 0, ymax = 32, fill = colors3[1], alpha = 1, colour = NA) +  
+  geom_rect(xmin = log10(115000), xmax = log10(135000), ymin = 0, ymax = 32, fill = colors3[2], alpha = 1, colour = NA) +  
+  geom_rect(xmin = log10(19000), xmax = log10(115000), ymin = 0, ymax = 32, fill = colors3[1], alpha = 0.1, colour = NA) +  
+  geom_rect(xmin = log10(0), xmax = log10(19000), ymin = 0, ymax = 32, fill = colors3[2], alpha = 0.1, colour = NA) + 
+  geom_rect(xmin = log10(45000), xmax = log10(65000), ymin = 0, ymax = 32, fill = grey_color, alpha = 0.1, colour = NA) + 
+  geom_step(aes(x = time, y = Ne, group = ind, colour = coverage), alpha = 0.2, linewidth = 0.6) +
+  geom_text(data = summary_df, aes(label = paste("N:",step_count), x = Inf, y = Inf), hjust = 1.5, vjust = 2, size = 3, color = "black", show.legend = FALSE) +  # Add text annotations
+  facet_wrap(~state, nrow = 5, labeller = labeller(state = function(x) gsub("_", " ", x))) +  
+  labs(x = "Years", y = expression("Effective population size (x10"^"4"~")")) +  
+  scale_x_log10(limits = c(10000, 5000000), labels = scales::comma) +  
+  scale_y_continuous(limits = c(0, 30), expand = expansion(mult = c(0, 0.05))) +
+  scale_colour_gradient(low = "red", high = "yellow") +   # coverage mapping
+  theme_classic() +  
+  theme(
+    strip.background = element_blank(),
+    axis.line.x = element_line(colour = "black"),
+    axis.line.y = element_line(colour = "black"),
+    panel.border = element_rect(colour = "black", fill = NA)
+  ) +
+  guides(alpha = "none")
+
+
+ggsave("Results/best_source/SupFig1.CLEAN_each_pop_coverage.pdf", plot = last_plot(), width = 3, height = 6)  
+ggsave("Results/best_source/SupFig1.CLEAN_each_pop_coverage.png", plot = last_plot(), device = "png", width = 3, height = 6)
+
+
+```
+
