@@ -1,0 +1,462 @@
+---
+title: "SMCpp"
+output:
+  html_document: default
+  pdf_document: default
+date: "2025-02-19"
+---
+
+```{r}
+
+### input the SMCpp estimate results
+
+library(ggplot2)
+
+### input the csv files from smc++
+
+# Define population names
+pops <- c("N_QLD", "S_NSW", "SEQLD_NNSW", "M_NSW", "VIC_noSA")
+
+
+# Construct file paths
+file_paths_8 <- paste0("~/Library/CloudStorage/OneDrive-TheUniversityofSydney(Staff)/1_PhD/koala/mutation_rate/Demographics/Koala_SMCpp/estimate/plot_full_", 
+                     pops, "_tpe3e6_8knots.csv")
+
+# Read all CSVs, drop the 4th and 5th columns, and bind them
+SMCpp_8kn <- do.call(rbind, lapply(file_paths_8, function(x) {
+  df <- read.csv(x)[ , -c(4,5)]  # Drop columns 4 and 5
+  colnames(df) <- c("pop", "time", "Ne")  # Rename columns
+  return(df)
+}))
+
+# Construct file paths
+file_paths_16 <- paste0("~/Library/CloudStorage/OneDrive-TheUniversityofSydney(Staff)/1_PhD/koala/mutation_rate/Demographics/Koala_SMCpp/estimate/plot_full_", 
+                     pops, "_tpe3e6_16knots.csv")
+
+# Read all CSVs, drop the 4th and 5th columns, and bind them
+SMCpp_16kn <- do.call(rbind, lapply(file_paths_16, function(x) {
+  df <- read.csv(x)[ , -c(4,5)]  # Drop columns 4 and 5
+  colnames(df) <- c("pop", "time", "Ne")  # Rename columns
+  return(df)
+}))
+
+# Construct file paths
+file_paths_32 <- paste0("~/Library/CloudStorage/OneDrive-TheUniversityofSydney(Staff)/1_PhD/koala/mutation_rate/Demographics/Koala_SMCpp/estimate/plot_full_", 
+                     pops, "_tpe3e6_32knots.csv")
+
+# Read all CSVs, drop the 4th and 5th columns, and bind them
+SMCpp_32kn <- do.call(rbind, lapply(file_paths_32, function(x) {
+  df <- read.csv(x)[ , -c(4,5)]  # Drop columns 4 and 5
+  colnames(df) <- c("pop", "time", "Ne")  # Rename columns
+  return(df)
+}))
+
+# Construct file paths
+file_paths_50 <- paste0("~/Library/CloudStorage/OneDrive-TheUniversityofSydney(Staff)/1_PhD/koala/mutation_rate/Demographics/Koala_SMCpp/estimate/plot_full_", 
+                     pops, "_tpe3e6_50knots.csv")
+
+# Read all CSVs, drop the 4th and 5th columns, and bind them
+SMCpp_50kn <- do.call(rbind, lapply(file_paths_50, function(x) {
+  df <- read.csv(x)[ , -c(4,5)]  # Drop columns 4 and 5
+  colnames(df) <- c("pop", "time", "Ne")  # Rename columns
+  return(df)
+}))
+
+
+```
+
+
+```{r}
+#### Create a panel of the SMCpp estimate results with time on a log scale
+
+
+# Load required libraries
+library(ggplot2)
+library(patchwork)
+
+# Create the four plots without titles
+log_8kn <- ggplot(SMCpp_8kn, aes(x = time, y = Ne, color = pop, group = pop)) +
+            geom_rect(xmin = log10(300000), xmax = log10(340000), ymin = 0, ymax = 150000, fill = colors3[2], alpha = 1, colour = NA) +  
+            geom_rect(xmin = log10(240000), xmax = log10(300000), ymin = 0, ymax = 150000, fill = colors3[1], alpha = 1, colour = NA) +  
+            geom_rect(xmin = log10(194000), xmax = log10(240000), ymin = 0, ymax = 150000, fill = colors3[2], alpha = 1, colour = NA) +  
+            geom_rect(xmin = log10(135000), xmax = log10(194000), ymin = 0, ymax = 150000, fill = colors3[1], alpha = 1, colour = NA) +  
+            geom_rect(xmin = log10(115000), xmax = log10(135000), ymin = 0, ymax = 150000, fill = colors3[2], alpha = 1, colour = NA) +  
+            geom_rect(xmin = log10(19000), xmax = log10(115000), ymin = 0, ymax = 150000, fill = colors3[1], alpha = 1, colour = NA) + 
+            geom_rect(xmin = log10(1), xmax = log10(19000), ymin = 0, ymax = 150000, fill = colors3[2], alpha = 1, colour = NA) + 
+            geom_rect(xmin = log10(45000), xmax = log10(65000), ymin = 0, ymax = 150000, fill = grey_color, alpha = 0.11, inherit.aes = FALSE) + 
+  geom_line(linewidth = 1.2) +
+  labs(x = "Years", y = expression(N[e])) +
+  scale_x_log10(limits = c(5000, 5000000)) +
+  scale_y_continuous(limits = c(0, 120000), expand = expansion(mult = c(0, 0.05))) +
+  theme_classic() +
+  theme(legend.position = "right")
+
+log_16kn <- ggplot(SMCpp_16kn, aes(x = time, y = Ne, color = pop, group = pop)) +
+            geom_rect(xmin = log10(300000), xmax = log10(340000), ymin = 0, ymax = 150000, fill = colors3[2], alpha = 1, colour = NA) +  
+            geom_rect(xmin = log10(240000), xmax = log10(300000), ymin = 0, ymax = 150000, fill = colors3[1], alpha = 1, colour = NA) +  
+            geom_rect(xmin = log10(194000), xmax = log10(240000), ymin = 0, ymax = 150000, fill = colors3[2], alpha = 1, colour = NA) +  
+            geom_rect(xmin = log10(135000), xmax = log10(194000), ymin = 0, ymax = 150000, fill = colors3[1], alpha = 1, colour = NA) +  
+            geom_rect(xmin = log10(115000), xmax = log10(135000), ymin = 0, ymax = 150000, fill = colors3[2], alpha = 1, colour = NA) +  
+            geom_rect(xmin = log10(19000), xmax = log10(115000), ymin = 0, ymax = 150000, fill = colors3[1], alpha = 1, colour = NA) + 
+            geom_rect(xmin = log10(1), xmax = log10(19000), ymin = 0, ymax = 150000, fill = colors3[2], alpha = 1, colour = NA) + 
+            geom_rect(xmin = log10(45000), xmax = log10(65000), ymin = 0, ymax = 150000, fill = grey_color, alpha = 0.11, inherit.aes = FALSE) + 
+  geom_line(linewidth = 1.2) +
+  labs(x = "Years", y = expression(N[e])) +
+  scale_x_log10(limits = c(5000, 2000000)) +
+  scale_y_continuous(limits = c(0, 120000), expand = expansion(mult = c(0, 0.05))) +
+  theme_classic() +
+  theme(legend.position = "none")
+
+log_32kn <- ggplot(SMCpp_32kn, aes(x = time, y = Ne, color = pop, group = pop)) +
+            geom_rect(xmin = log10(300000), xmax = log10(340000), ymin = 0, ymax = 150000, fill = colors3[2], alpha = 1, colour = NA) +  
+            geom_rect(xmin = log10(240000), xmax = log10(300000), ymin = 0, ymax = 150000, fill = colors3[1], alpha = 1, colour = NA) +  
+            geom_rect(xmin = log10(194000), xmax = log10(240000), ymin = 0, ymax = 150000, fill = colors3[2], alpha = 1, colour = NA) +  
+            geom_rect(xmin = log10(135000), xmax = log10(194000), ymin = 0, ymax = 150000, fill = colors3[1], alpha = 1, colour = NA) +  
+            geom_rect(xmin = log10(115000), xmax = log10(135000), ymin = 0, ymax = 150000, fill = colors3[2], alpha = 1, colour = NA) +  
+            geom_rect(xmin = log10(19000), xmax = log10(115000), ymin = 0, ymax = 150000, fill = colors3[1], alpha = 1, colour = NA) + 
+            geom_rect(xmin = log10(1), xmax = log10(19000), ymin = 0, ymax = 150000, fill = colors3[2], alpha = 1, colour = NA) + 
+            geom_rect(xmin = log10(45000), xmax = log10(65000), ymin = 0, ymax = 150000, fill = grey_color, alpha = 0.11, inherit.aes = FALSE) + 
+  geom_line(linewidth = 1.2) +
+  labs(x = "Years", y = expression(N[e])) +
+  scale_x_log10(limits = c(5000, 2000000)) +
+  scale_y_continuous(limits = c(0, 120000), expand = expansion(mult = c(0, 0.05))) +
+  theme_classic() +
+  theme(legend.position = "none")
+
+log_50kn <- ggplot(SMCpp_50kn, aes(x = time, y = Ne, color = pop, group = pop)) +
+            geom_rect(xmin = log10(300000), xmax = log10(340000), ymin = 0, ymax = 150000, fill = colors3[2], alpha = 1, colour = NA) +  
+            geom_rect(xmin = log10(240000), xmax = log10(300000), ymin = 0, ymax = 150000, fill = colors3[1], alpha = 1, colour = NA) +  
+            geom_rect(xmin = log10(194000), xmax = log10(240000), ymin = 0, ymax = 150000, fill = colors3[2], alpha = 1, colour = NA) +  
+            geom_rect(xmin = log10(135000), xmax = log10(194000), ymin = 0, ymax = 150000, fill = colors3[1], alpha = 1, colour = NA) +  
+            geom_rect(xmin = log10(115000), xmax = log10(135000), ymin = 0, ymax = 150000, fill = colors3[2], alpha = 1, colour = NA) +  
+            geom_rect(xmin = log10(19000), xmax = log10(115000), ymin = 0, ymax = 150000, fill = colors3[1], alpha = 1, colour = NA) + 
+            geom_rect(xmin = log10(1), xmax = log10(19000), ymin = 0, ymax = 150000, fill = colors3[2], alpha = 1, colour = NA) + 
+            geom_rect(xmin = log10(45000), xmax = log10(65000), ymin = 0, ymax = 150000, fill = grey_color, alpha = 0.11, inherit.aes = FALSE) + 
+  geom_line(linewidth = 1.2) +
+  labs(x = "Years", y = expression(N[e])) +
+  scale_x_log10(limits = c(5000, 2000000)) +
+  scale_y_continuous(limits = c(0, 120000), expand = expansion(mult = c(0, 0.05))) +
+  theme_classic() +
+  theme(legend.position = "none")
+
+
+# Explicit mapping to ggplot2 defaults
+pop_colors <- c(
+  "N_QLD"      = "#C77CFF",  # purple
+  "SEQLD_NNSW" = "#00BFC4",  # teal
+  "M_NSW"      = "#7CAE00",  # green
+  "S_NSW"      = "#E68613",  # orange
+  "VIC_noSA"   = "#F8766D"   # reddish
+)
+
+# Ensure consistent factor levels across all datasets
+all_pops <- names(pop_colors)
+SMCpp_8kn$pop  <- factor(SMCpp_8kn$pop,  levels = all_pops)
+SMCpp_16kn$pop <- factor(SMCpp_16kn$pop, levels = all_pops)
+SMCpp_32kn$pop <- factor(SMCpp_32kn$pop, levels = all_pops)
+SMCpp_50kn$pop <- factor(SMCpp_50kn$pop, levels = all_pops)
+
+# Apply the same manual color scale to every plot
+log_8kn  <- log_8kn  + scale_color_manual(values = pop_colors, drop = FALSE)
+log_16kn <- log_16kn + scale_color_manual(values = pop_colors, drop = FALSE)
+log_32kn <- log_32kn + scale_color_manual(values = pop_colors, drop = FALSE)
+log_50kn <- log_50kn + scale_color_manual(values = pop_colors, drop = FALSE)
+
+
+# Combine plots in a 2x2 grid with one legend on the right
+(log_8kn | log_16kn) / (log_32kn | log_50kn) + plot_layout(guides = "collect")
+ggsave("SMCpp_results/SMCpp_estimate_log_various_knots.pdf", width = 12, height = 10) 
+
+
+log_50kn_final <- ggplot(SMCpp_50kn, aes(x = time, y = Ne, color = pop, group = pop)) +
+  geom_rect(xmin = log10(123000), xmax = log10(147000), ymin = 0, ymax = 150000, 
+            fill = "lightpink", alpha = 0.5, colour = NA) +
+  geom_rect(xmin = log10(19000), xmax = log10(122000), ymin = 0, ymax = 150000, 
+            fill = "lightblue", alpha = 0.5, colour = NA) +
+  geom_vline(xintercept = 60000, linetype = "dashed", color = "black") +  
+  geom_line(linewidth = 1.2) +
+  labs(x = "Years", y = expression(N[e])) +
+  scale_x_log10(limits = c(8000, 2000000)) +
+  scale_y_continuous(limits = c(0, 80000), expand = expansion(mult = c(0, 0.05))) +
+  theme_classic() +
+  theme(legend.position = "none")
+log_50kn_final
+
+ggsave("SMCpp_results/SMCpp_estimate_log_50kn.pdf", width = 12, height = 10)
+
+
+```
+
+
+
+
+
+
+```{r}
+
+#### Create a panel of the SMCpp estimate results with time on a linear scale
+
+# Load required libraries
+library(ggplot2)
+library(patchwork)
+
+# Create the four plots without redundant legends
+linear_8kn <- ggplot(SMCpp_8kn, aes(x = time, y = Ne, color = pop, group = pop)) +
+  geom_rect(xmin = 123000, xmax = 147000, ymin = 0, ymax = 150000, 
+            fill = "lightpink", alpha = 0.5, colour = NA) +
+  geom_rect(xmin = 19000, xmax = 122000, ymin = 0, ymax = 150000, 
+            fill = "lightblue", alpha = 0.5, colour = NA) +
+  geom_vline(xintercept = 60000, linetype = "dashed", color = "black") +  
+  geom_line(linewidth = 1.2) +
+  labs(x = "Years", y = expression(N[e])) +
+  scale_x_continuous(limits = c(1000, 300000), expand = expansion(mult = c(0.05, 0.05))) +
+  scale_y_continuous(limits = c(0, 100000), expand = expansion(mult = c(0, 0.05))) +
+  theme_classic()
+
+linear_16kn <- ggplot(SMCpp_16kn, aes(x = time, y = Ne, color = pop, group = pop)) +
+  geom_rect(xmin = 123000, xmax = 147000, ymin = 0, ymax = 150000, 
+            fill = "lightpink", alpha = 0.5, colour = NA) +
+  geom_rect(xmin = 19000, xmax = 122000, ymin = 0, ymax = 150000, 
+            fill = "lightblue", alpha = 0.5, colour = NA) +
+  geom_vline(xintercept = 60000, linetype = "dashed", color = "black") +  
+  geom_line(linewidth = 1.2) +
+  labs(x = "Years", y = expression(N[e])) +
+  scale_x_continuous(limits = c(1000, 300000), expand = expansion(mult = c(0.05, 0.05))) +
+  scale_y_continuous(limits = c(0, 100000), expand = expansion(mult = c(0, 0.05))) +
+  theme_classic() +
+  theme(legend.position = "none")  # Remove legend
+
+linear_32kn <- ggplot(SMCpp_32kn, aes(x = time, y = Ne, color = pop, group = pop)) +
+  geom_rect(xmin = 123000, xmax = 147000, ymin = 0, ymax = 150000, 
+            fill = "lightpink", alpha = 0.5, colour = NA) +
+  geom_rect(xmin = 19000, xmax = 122000, ymin = 0, ymax = 150000, 
+            fill = "lightblue", alpha = 0.5, colour = NA) +
+  geom_vline(xintercept = 60000, linetype = "dashed", color = "black") +  
+  geom_line(linewidth = 1.2) +
+  labs(x = "Years", y = expression(N[e])) +
+  scale_x_continuous(limits = c(1000, 300000), expand = expansion(mult = c(0.05, 0.05))) +
+  scale_y_continuous(limits = c(0, 100000), expand = expansion(mult = c(0, 0.05))) +
+  theme_classic() +
+  theme(legend.position = "none")  # Remove legend
+
+linear_50kn <- ggplot(SMCpp_50kn, aes(x = time, y = Ne, color = pop, group = pop)) +
+  geom_rect(xmin = 123000, xmax = 147000, ymin = 0, ymax = 150000, 
+            fill = "lightpink", alpha = 0.5, colour = NA) +
+  geom_rect(xmin = 19000, xmax = 122000, ymin = 0, ymax = 150000, 
+            fill = "lightblue", alpha = 0.5, colour = NA) +
+  geom_vline(xintercept = 60000, linetype = "dashed", color = "black") +  
+  geom_line(linewidth = 1.2) +
+  labs(x = "Years", y = expression(N[e])) +
+  scale_x_continuous(limits = c(1000, 300000), expand = expansion(mult = c(0.05, 0.05))) +
+  scale_y_continuous(limits = c(0, 100000), expand = expansion(mult = c(0, 0.05))) +
+  theme_classic() +
+  theme(legend.position = "none")  # Remove legend
+
+# Combine plots in a 2x2 grid with one legend on the right
+(linear_8kn | linear_16kn) / (linear_32kn | linear_50kn) + plot_layout(guides = "collect")
+
+ggsave("SMCpp_results/SMCpp_estimate_linear_various_knots.pdf", width = 12, height = 10) 
+
+linear_50kn_final <- ggplot(SMCpp_50kn, aes(x = time, y = Ne, color = pop, group = pop)) +
+  geom_rect(xmin = 123000, xmax = 147000, ymin = 0, ymax = 150000, 
+            fill = "lightpink", alpha = 0.5, colour = NA) +
+  geom_rect(xmin = 19000, xmax = 123000, ymin = 0, ymax = 150000, 
+            fill = "lightblue", alpha = 0.5, colour = NA) +
+  geom_vline(xintercept = 60000, linetype = "dashed", color = "black") +  
+  geom_line(linewidth = 2) +
+  labs(x = "Years", y = expression(N[e])) +
+  scale_x_continuous(limits = c(5000, 300000), 
+                     breaks = seq(0, 300000, by = 50000),  # Add ticks every 10,000
+                     expand = expansion(mult = c(0.05, 0.05))) +
+  scale_y_continuous(limits = c(0, 80000), expand = expansion(mult = c(0, 0.05))) +
+  theme_classic() +
+  theme(legend.position = "none")  # Remove legend
+
+linear_50kn_final
+
+ggsave("SMCpp_results/SMCpp_estimate_linear_50kn.pdf", width = 12, height = 10)
+ggsave("SMCpp_results/SMCpp_estimate_linear_50kn.png", width = 12, height = 10)
+
+
+```
+
+```{r}
+### Plot the split times for the pairs of populations inferred by SMCpp
+### Code was refined and annotated using chatGPT
+
+library(ggplot2)
+library(patchwork)  # For arranging multiple plots
+
+# Define population pairs correctly as separate population names
+pop_pairs <- list(
+  c("N_QLD", "M_NSW"),
+  c("N_QLD", "S_NSW"),
+  c("N_QLD", "VIC_noSA"),
+  c("N_QLD", "SEQLD_NNSW"),
+  c("SEQLD_NNSW", "M_NSW"),
+  c("SEQLD_NNSW", "S_NSW"),
+  c("SEQLD_NNSW", "VIC_noSA"),
+  c("M_NSW", "VIC_noSA"),
+  c("M_NSW", "S_NSW"),
+  c("S_NSW", "VIC_noSA")
+)
+
+# Function to read and process each CSV file
+process_data <- function(file_path) {
+  df <- read.csv(file_path)[ , -c(4,5)]  # Drop columns 4 and 5
+  colnames(df) <- c("pop", "time", "Ne")  # Rename columns
+  return(df)
+}
+
+# Function to generate plots and extract split times
+generate_plots <- function(file_paths, output_pdf, output_csv) {
+  datasets <- setNames(lapply(file_paths, process_data), 
+                       tools::file_path_sans_ext(basename(file_paths)))
+
+  smcpp_split_plot_list <- list()
+  split_times <- data.frame(Dataset = character(), Pop_Pair = character(), Split_Time = numeric(), stringsAsFactors = FALSE)
+
+  for (dataset_name in names(datasets)) {
+    df <- datasets[[dataset_name]]  # Get the dataset
+    
+    for (pair in pop_pairs) {
+      df_subset <- df[df$pop %in% pair, ]
+      
+      if (length(unique(df_subset$pop)) == 2) {
+        split_time <- max(df_subset$time[df_subset$pop == pair[2]])
+        
+        split_times <- rbind(split_times, data.frame(Dataset = dataset_name, 
+                                                     Pop_Pair = paste(pair, collapse = "_vs_"), 
+                                                     Split_Time = split_time))
+        
+        p <- ggplot(df_subset, aes(x = time, y = Ne, color = pop, group = pop)) +
+            geom_rect(xmin = log10(300000), xmax = log10(340000), ymin = 0, ymax = 150000, fill = colors3[2], alpha = 1, colour = NA) +  
+            geom_rect(xmin = log10(240000), xmax = log10(300000), ymin = 0, ymax = 150000, fill = colors3[1], alpha = 1, colour = NA) +  
+            geom_rect(xmin = log10(194000), xmax = log10(240000), ymin = 0, ymax = 150000, fill = colors3[2], alpha = 1, colour = NA) +  
+            geom_rect(xmin = log10(135000), xmax = log10(194000), ymin = 0, ymax = 150000, fill = colors3[1], alpha = 1, colour = NA) +  
+            geom_rect(xmin = log10(115000), xmax = log10(135000), ymin = 0, ymax = 150000, fill = colors3[2], alpha = 1, colour = NA) +  
+            geom_rect(xmin = log10(19000), xmax = log10(115000), ymin = 0, ymax = 150000, fill = colors3[1], alpha = 1, colour = NA) + 
+            geom_rect(xmin = log10(0), xmax = log10(19000), ymin = 0, ymax = 150000, fill = colors3[2], alpha = 1, colour = NA) + 
+            geom_rect(xmin = log10(45000), xmax = log10(65000), ymin = 0, ymax = 150000, fill = grey_color, alpha = 0.11) + 
+            geom_vline(xintercept = split_time, color = "black") +  
+            geom_line(linewidth = 1.2) +
+            labs(title = paste(pair, collapse = " vs "), 
+                 x = "Years", y = expression(N[e])) +
+            scale_x_log10(limits = c(5000, 5000000)) +
+            scale_y_continuous(limits = c(0, 100000), expand = expansion(mult = c(0, 0.05))) +
+            theme_classic()
+        
+        smcpp_split_plot_list[[paste(dataset_name, paste(pair, collapse = "_vs_"), sep = "_")]] <- p
+      }
+    }
+  }
+
+  smcpp_split_panel <- wrap_plots(smcpp_split_plot_list) + plot_layout(ncol = 2)
+
+  print(smcpp_split_panel)
+  ggsave(output_pdf, smcpp_split_panel, width = 12, height = 10)
+
+  print(split_times)
+  write.csv(split_times, output_csv, row.names = FALSE)
+
+  return(split_times)
+}
+
+# List all CSV files for 50knots and 8knots
+file_paths_50knots <- list.files(path = "~/Library/CloudStorage/OneDrive-TheUniversityofSydney(Staff)/1_PhD/koala/mutation_rate/Demographics/Koala_SMCpp/split/50knots", 
+                                 pattern = "*.csv", full.names = TRUE)
+
+file_paths_8knots <- list.files(path = "~/Library/CloudStorage/OneDrive-TheUniversityofSydney(Staff)/1_PhD/koala/mutation_rate/Demographics/Koala_SMCpp/split/8knots", 
+                                pattern = "*.csv", full.names = TRUE)
+
+# Generate plots and extract split times for both datasets
+split_times_50knots <- generate_plots(file_paths_50knots, "SMCpp_results/SMCpp_split_panel_50knots.pdf", "SMCpp_results/split_times_50knots.csv")
+split_times_8knots <- generate_plots(file_paths_8knots, "SMCpp_results/SMCpp_split_panel_8knots.pdf", "SMCpp_results/split_times_8knots.csv")
+
+# Merge split time results with only three columns: Pop_Pair, Split_Time_8knots, Split_Time_50knots
+merged_split_times <- merge(split_times_8knots[, c("Pop_Pair", "Split_Time")], 
+                            split_times_50knots[, c("Pop_Pair", "Split_Time")], 
+                            by = "Pop_Pair", 
+                            all = TRUE, 
+                            suffixes = c("_8knots", "_50knots"))
+
+# Rename columns for clarity
+colnames(merged_split_times) <- c("Pop_Pair", "Split_Time_8knots", "Split_Time_50knots")
+
+# Save final merged CSV
+write.csv(merged_split_times, "SMCpp_results/split_times_merged.csv", row.names = FALSE)
+
+print(merged_split_times)
+
+
+```
+
+
+```{r}
+
+## Plot a clean version for a figure!
+
+
+# Graph using the best source dataframe
+library(wesanderson)
+library(RColorBrewer)
+
+# Convert the 'state' column to a factor with the specified order
+SMCpp_50kn$pop <- factor(SMCpp_50kn$pop, levels = c("VIC_noSA", "S_NSW", "M_NSW", "SEQLD_NNSW", "N_QLD"))
+
+# Extract the first two colors from the Moonrise3 palette
+colors3 <- wes_palette("Moonrise3", 2, type = "discrete")
+# Select a grey color from the "Greys" palette (e.g., the 6th shade from 9 levels)
+grey_color <- brewer.pal(9, "Greys")[6]
+
+
+log_50kn_final_clean <- ggplot(SMCpp_50kn) +
+  geom_rect(xmin = log10(300000), xmax = log10(340000), ymin = 0, ymax = 150000, fill = colors3[2], alpha = 1, colour = NA) +  
+  geom_rect(xmin = log10(240000), xmax = log10(300000), ymin = 0, ymax = 150000, fill = colors3[1], alpha = 1, colour = NA) +  
+  geom_rect(xmin = log10(194000), xmax = log10(240000), ymin = 0, ymax = 150000, fill = colors3[2], alpha = 1, colour = NA) +  
+  geom_rect(xmin = log10(135000), xmax = log10(194000), ymin = 0, ymax = 150000, fill = colors3[1], alpha = 1, colour = NA) +  
+  geom_rect(xmin = log10(115000), xmax = log10(135000), ymin = 0, ymax = 150000, fill = colors3[2], alpha = 1, colour = NA) +  
+  geom_rect(xmin = log10(19000), xmax = log10(115000), ymin = 0, ymax = 150000, fill = colors3[1], alpha = 1, colour = NA) + 
+  geom_rect(xmin = log10(0), xmax = log10(19000), ymin = 0, ymax = 150000, fill = colors3[2], alpha = 1, colour = NA) + 
+  geom_rect(xmin = log10(45000), xmax = log10(65000), ymin = 0, ymax = 150000, fill = grey_color, alpha = 0.11) + 
+  geom_line(aes(x = time, y = Ne/10000, color = pop),linewidth = 2) +
+  labs(
+    x = "Years ago",  # X-axis label
+    y = expression("Effective population size (x10"^"4"~")")  # Y-axis label with scientific notation
+  )+
+  scale_x_log10(limits = c(10000, 1200000), labels = scales::comma) +  
+  scale_y_continuous(limits = c(0, 10), expand = expansion(mult = c(0, 0.05))) +
+  theme_classic()
+  #theme(legend.position = "none")
+log_50kn_final_clean
+
+
+
+
+ggsave("SMCpp_results/Fig4.CLEAN_SMCpp_estimate_log_50kn_2.pdf", width = 6, height = 3)
+ggsave("SMCpp_results/Fig4.CLEAN_SMCpp_estimate_log_50kn_2.png", width = 6, height = 3)
+
+log_50kn_final_clean <- ggplot(SMCpp_50kn) +
+  annotate("rect", xmin = 300000, xmax = 340000, ymin = 0, ymax = 8.5, fill = colors3[2], alpha = 0.5, colour = NA) +  
+  annotate("rect", xmin = 240000, xmax = 300000, ymin = 0, ymax = 8.5, fill = colors3[1], alpha = 0.5, colour = NA) +  
+  annotate("rect", xmin = 194000, xmax = 240000, ymin = 0, ymax = 8.5, fill = colors3[2], alpha = 0.5, colour = NA) +  
+  annotate("rect", xmin = 135000, xmax = 194000, ymin = 0, ymax = 8.5, fill = colors3[1], alpha = 0.5, colour = NA) +  
+  annotate("rect", xmin = 115000, xmax = 135000, ymin = 0, ymax = 8.5, fill = colors3[2], alpha = 0.5, colour = NA) +  
+  annotate("rect", xmin = 19000, xmax = 115000, ymin = 0, ymax = 8.5, fill = colors3[1], alpha = 0.5, colour = NA) +  
+  annotate("rect", xmin = 0, xmax = 19000, ymin = 0, ymax = 8.5, fill = colors3[2], alpha = 0.5, colour = NA) +  
+  annotate("rect", xmin = 45000, xmax = 65000, ymin = 0, ymax = 8.5, fill = grey_color, alpha = 0.5, colour = NA) +  
+  geom_vline(xintercept = 350000, linetype = "dashed", color = "black") +  
+  geom_line(aes(x = time, y = Ne/10000, color = pop), linewidth = 2) +
+  labs(
+    x = "Years ago",  
+    y = expression("Effective population size (x10"^"4"~")")  
+  ) +
+  scale_x_log10(limits = c(10000, 1200000), labels = scales::comma) +  
+  scale_y_continuous(limits = c(0, 8.5), expand = expansion(mult = c(0, 0))) +
+  theme_classic()
+
+log_50kn_final_clean
+
+
+```
+
